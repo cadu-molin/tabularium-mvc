@@ -7,6 +7,10 @@ import Publisher from './publisher.js'
 import Author from './author.js'
 
 export default class Book extends BaseModel {
+  public static get table() {
+    return 'book'
+  }
+
   @column({ isPrimary: true })
   declare id: number
 

@@ -8,6 +8,10 @@ import Book from './book.js'
 import Rating from '../types/rating.js'
 
 export default class BookReview extends BaseModel {
+  public static get table() {
+    return 'book_review'
+  }
+
   @column({ isPrimary: true })
   declare id: number
 

@@ -5,6 +5,10 @@ import User from './user.js'
 import Book from './book.js'
 
 export default class ReadingList extends BaseModel {
+  public static get table() {
+    return 'reading_list'
+  }
+
   @column({ isPrimary: true })
   declare id: number
 
