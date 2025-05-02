@@ -5,7 +5,7 @@ export default function Home() {
     <>
       <Head title="Registrar-se" />
 
-      <div className="h-full m-4">
+      <div className="">
         teste
         <input type="text" name="login" id="login" className="bg-primary" />
       </div>
