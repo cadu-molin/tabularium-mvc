@@ -1,4 +1,5 @@
 import { Head } from '@inertiajs/react'
+import { Button } from '~/components/ui/button'
 
 export default function Home() {
   return (
@@ -7,8 +8,9 @@ export default function Home() {
 
       <div className="">
         teste
-        <input type="text" name="login" id="login" className="bg-primary" />
+        <input type="text" name="login" id="login" />
       </div>
+      <Button>Click me</Button>
     </>
   )
 }
