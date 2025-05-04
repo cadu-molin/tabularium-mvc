@@ -6,6 +6,7 @@
     "jsx": "react-jsx",
     "paths": {
       "~/*": ["./*"],
+      "backend/*": ["../app/*"],
     },
   },
   "include": ["./**/*.ts", "./**/*.tsx"],

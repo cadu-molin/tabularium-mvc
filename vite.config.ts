@@ -20,6 +20,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '~/': `${getDirname(import.meta.url)}/inertia/`,
+      'backend/': `${getDirname(import.meta.url)}/app/`,
     },
   },
 })
