@@ -4,6 +4,9 @@ import RegisterService from '#services/auth/register_service'
 import { registerFormSchemaValidator } from '#validators/auth/register_validator'
 import RegisterUserException from '#exceptions/auth/register_user_exception'
 import AuthService from '#services/auth/auth_service'
+import type { Result } from '#types/result'
+import { RequestError } from '#dto/request_error'
+import { RegisterFormDTO } from '#dto/auth/regiter_form_dto'
 
 @inject()
 export default class RegisterController {
@@ -28,14 +31,30 @@ export default class RegisterController {
 
       if (user) {
         await this.authService.loginUser(user, auth)
-        session.flash('success', 'Usuário criado com sucesso')
-        return response.redirect().toRoute('home')
+
+        const responseSuccess: Result<RegisterFormDTO, {}> = {
+          success: true,
+          data: {
+            fullName: user.fullName,
+            login: user.login,
+          },
+        }
+
+        return response.ok(responseSuccess)
       }
 
       throw new RegisterUserException('Erro ao criar usuário')
     } catch (error) {
-      return response.status(422).send(error.message)
-      // return response.redirect().back()
+      const errorResquest: RequestError = {
+        message: error.message,
+      }
+
+      const responseError: Result<{}, RequestError> = {
+        success: false,
+        error: errorResquest,
+      }
+
+      return response.internalServerError(responseError)
     }
   }
 }

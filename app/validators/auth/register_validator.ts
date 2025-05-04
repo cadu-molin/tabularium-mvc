@@ -11,6 +11,7 @@ const registerFormSchema = vine.object({
     .maxLength(255)
     .confirmed({ confirmationField: 'password_confirmation' }),
   password_confirmation: vine.string().sameAs('password'),
+  errors: vine.array(vine.string()).optional(),
 })
 
 const registerFormSchemaMessages = {
@@ -32,6 +33,7 @@ const registerFormDefaultValues = {
   login: '',
   password: '',
   password_confirmation: '',
+  errors: [],
 }
 
 const registerFormSchemaValidator = vine.compile(registerFormSchema)

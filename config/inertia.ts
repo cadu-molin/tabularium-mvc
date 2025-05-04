@@ -1,5 +1,10 @@
+import env from '#start/env'
 import { defineConfig } from '@adonisjs/inertia'
 import type { InferSharedProps } from '@adonisjs/inertia/types'
+
+type EnvConfig = {
+  APP_URL: string
+}
 
 const inertiaConfig = defineConfig({
   /**
@@ -12,6 +17,12 @@ const inertiaConfig = defineConfig({
    */
   sharedData: {
     user: (ctx) => ctx.inertia.always(() => ctx.auth.user),
+    env: (ctx) =>
+      ctx.inertia.always((): EnvConfig => {
+        return {
+          APP_URL: `http://${env.get('HOST')}:${env.get('PORT')}`,
+        }
+      }),
   },
 
   /**

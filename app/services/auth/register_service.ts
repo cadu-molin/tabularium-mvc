@@ -13,11 +13,16 @@ export default class RegisterService {
 
   async registerUser(userRegister: RegisterUserParms): Promise<User | never> {
     try {
+      const userExists = await User.findBy('login', userRegister.login)
+      if (userExists) {
+        throw new RegisterUserException('Usuário já existe')
+      }
+
       const user = await User.create(userRegister)
       return user
     } catch (error) {
-      logger.error('registerUser:', JSON.stringify(error))
-      throw new RegisterUserException('Erro ao criar usuário')
+      logger.error(error.message)
+      throw new RegisterUserException(error.message)
     }
   }
 }
