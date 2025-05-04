@@ -1,3 +1,4 @@
+import User from '#models/user'
 import env from '#start/env'
 import { defineConfig } from '@adonisjs/inertia'
 import type { InferSharedProps } from '@adonisjs/inertia/types'

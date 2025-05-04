@@ -1,6 +1,8 @@
+import User from '#models/user'
 import { SharedProps } from '@adonisjs/inertia/types'
 import { Head, usePage } from '@inertiajs/react'
 import { Label } from '@radix-ui/react-label'
+import { useState } from 'react'
 import MainContainer from '~/components/custom/main_container'
 import { Button } from '~/components/ui/button'
 import {
@@ -13,9 +15,17 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import MainLayout from '~/layouts/main_layout'
 
-export default function Home() {
+export default function Profile() {
   const { user } = usePage<SharedProps>().props
+
+  const currentUser = user as User
+
+  const [login, setLogin] = useState(currentUser.login)
+  const [fullName, setFullName] = useState(currentUser.fullName)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
 
   return (
     <>
@@ -38,11 +48,23 @@ export default function Home() {
               <CardContent className="space-y-2">
                 <div className="space-y-1">
                   <Label htmlFor="fullName">Nome</Label>
-                  <Input id="fullName" defaultValue="Seu nome" />
+                  <Input
+                    id="fullName"
+                    defaultValue={fullName || ''}
+                    onChange={(e) => {
+                      setFullName(e.target.value)
+                    }}
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="login">Login</Label>
-                  <Input id="login" defaultValue="seu.login" />
+                  <Input
+                    id="login"
+                    defaultValue={login}
+                    onChange={(e) => {
+                      setLogin(e.target.value)
+                    }}
+                  />
                 </div>
               </CardContent>
               <CardFooter>
@@ -61,11 +83,23 @@ export default function Home() {
               <CardContent className="space-y-2">
                 <div className="space-y-1">
                   <Label htmlFor="current">Senha atual</Label>
-                  <Input id="current" type="password" />
+                  <Input
+                    id="current"
+                    type="password"
+                    onChange={(e) => {
+                      setCurrentPassword(e.target.value)
+                    }}
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="new">Senha nova</Label>
-                  <Input id="new" type="password" />
+                  <Input
+                    id="new"
+                    type="password"
+                    onChange={(e) => {
+                      setNewPassword(e.target.value)
+                    }}
+                  />
                 </div>
               </CardContent>
               <CardFooter>
@@ -78,3 +112,5 @@ export default function Home() {
     </>
   )
 }
+
+Profile.layout = (page: React.ReactNode) => <MainLayout>{page}</MainLayout>

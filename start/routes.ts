@@ -13,6 +13,10 @@ import homeRoute from './routes/home_route.js'
 import profileRoute from './routes/profile_route.js'
 import { middleware } from './kernel.js'
 
-router.group(homeRoute(router)).as('home')
-router.group(authRoute(router)).prefix('auth').as('auth')
+router.group(homeRoute(router)).as('home').use(middleware.userLogged())
+router.group(authRoute(router)).prefix('auth').as('auth').use(middleware.userLogged())
 router.group(profileRoute(router)).prefix('profile').as('profile').use(middleware.auth())
+
+router.get('*', ({ inertia }) => {
+  return inertia.render('errors/not_found')
+})
