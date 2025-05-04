@@ -1,15 +1,17 @@
-import { Head, usePage } from '@inertiajs/react'
+import { Head } from '@inertiajs/react'
+import MainContainer from '../../../components/custom/main_container'
+import Title from '~/components/custom/title'
+import LoginForm from './components/login_form'
 
-export default function Login() {
-  const { user } = usePage().props
-
-  console.log('user', user)
-
+export default function Register() {
   return (
     <>
       <Head title="Login" />
 
-      <div className="text-lg font-bold underline">home {JSON.stringify(user)} </div>
+      <MainContainer>
+        <Title>Login</Title>
+        <LoginForm />
+      </MainContainer>
     </>
   )
 }

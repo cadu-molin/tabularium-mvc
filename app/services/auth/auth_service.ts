@@ -16,4 +16,15 @@ export default class AuthService {
       throw new LoginUserException('Erro ao criar usuário')
     }
   }
+
+  async verifyCredentials(login: string, password: string): Promise<User | null> {
+    try {
+      const user = await User.verifyCredentials(login, password)
+
+      return user
+    } catch (error) {
+      logger.error('verifyCredentials:', JSON.stringify(error))
+      throw new LoginUserException('Erro ao verificar credenciais')
+    }
+  }
 }
