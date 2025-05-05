@@ -14,7 +14,7 @@ import profileRoute from './routes/profile_route.js'
 import { middleware } from './kernel.js'
 
 router.group(homeRoute(router)).as('home').use(middleware.userLogged())
-router.group(authRoute(router)).prefix('auth').as('auth').use(middleware.userLogged())
+router.group(authRoute(router)).prefix('auth').as('auth')
 router.group(profileRoute(router)).prefix('profile').as('profile').use(middleware.auth())
 
 router.get('*', ({ inertia }) => {

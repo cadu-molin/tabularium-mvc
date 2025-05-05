@@ -1,4 +1,4 @@
-import { Book, BookOpen, Bookmark, Home, User, UserCircle } from 'lucide-react'
+import { Book, BookOpen, Bookmark, User, UserCircle, LogOut } from 'lucide-react'
 
 import { cn } from '~/lib/utils'
 import {
@@ -125,16 +125,30 @@ export function MainMenuBar() {
           </NavigationMenuItem>
 
           {/* Home Link */}
+          {/* <NavigationMenuItem> */}
+          {/* <NavigationMenuLink */}
+          {/* onClick={(e) => { */}
+          {/* e.preventDefault() */}
+          {/* router.visit('/') */}
+          {/* }} */}
+          {/* className={navigationMenuTriggerStyle()} */}
+          {/* > */}
+          {/* <Home className="mr-2 h-4 w-4" /> */}
+          {/* Home */}
+          {/* </NavigationMenuLink> */}
+          {/* </NavigationMenuItem> */}
+
+          {/* Logout */}
           <NavigationMenuItem>
             <NavigationMenuLink
               onClick={(e) => {
                 e.preventDefault()
-                router.visit('/')
+                router.visit('/auth/logout')
               }}
-              className={navigationMenuTriggerStyle()}
+              className={cn('cursor-pointer', navigationMenuTriggerStyle())}
             >
-              <Home className="mr-2 h-4 w-4" />
-              Home
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>

@@ -27,4 +27,13 @@ export default class AuthService {
       throw new LoginUserException('Erro ao verificar credenciais')
     }
   }
+
+  async logoutUser(auth: Authenticator<Authenticators>): Promise<void> {
+    try {
+      await auth.use('web').logout()
+      return
+    } catch (error) {
+      logger.error('logoutUser:', JSON.stringify(error))
+    }
+  }
 }
