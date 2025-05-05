@@ -9,17 +9,16 @@ import { BookFormDTO } from '#dto/book/book_form_dto'
 
 @inject()
 export default class BookController {
+  constructor(protected bookService: BookService) {}
 
-    constructor(protected bookService: BookService) {}
-
-    async show({ inertia }: HttpContext) {
-
-      return inertia.render('book/index')
-    }
+  async show({ inertia }: HttpContext) {
+    return inertia.render('book/index')
+  }
 
   async store({ request, response, auth, session }: HttpContext) {
     try {
-      const { title, edition, releaseDate, publisherId, author } = await request.validateUsing(bookFormSchemaValidator)
+      const { title, edition, releaseDate, publisherId, author } =
+        await request.validateUsing(bookFormSchemaValidator)
 
       const book = await this.bookService.createBook({
         title,

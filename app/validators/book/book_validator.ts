@@ -17,11 +17,11 @@ const bookFormSchemaMessages = {
 }
 
 const bookFormSchemaMessagesField = {
-  title: "Titulo",
-  edition: "Edição",
-  releaseDate: "Data de Lançamento",
-  publisherId: "Editora",
-  author: "Autores",
+  title: 'Titulo',
+  edition: 'Edição',
+  releaseDate: 'Data de Lançamento',
+  publisherId: 'Editora',
+  author: 'Autores',
 }
 
 const bookFormDefaultValues = {
