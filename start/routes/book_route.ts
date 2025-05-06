@@ -4,8 +4,9 @@ import type { HttpRouterService } from '@adonisjs/core/types'
 export default function bookRoute(router: HttpRouterService) {
   return () => {
     router.group(() => {
-      router.get('/', [BookController, 'show']).as('show')
+      router.get('/create', [BookController, 'create']).as('create')
       router.get('/list', [BookController, 'list']).as('list')
+      router.get('/:id/edit', [BookController, 'edit']).as('edit')
     })
   }
 }

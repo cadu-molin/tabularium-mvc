@@ -6,15 +6,15 @@ import BookException from '#exceptions/book/book_exception'
 import type { Result } from '#types/result'
 import { RequestError } from '#dto/request_error'
 import { BookFormDTO } from '#dto/book/book_form_dto'
-import { BookListDTO } from '#dto/book/book_list_dto'
+import { BookDTO, createBookDTOFromModel } from '#dto/book/book_dto'
 import { AuthorDTO } from '#dto/author/author_dto'
 
 @inject()
 export default class BookController {
   constructor(protected bookService: BookService) {}
 
-  async show({ inertia }: HttpContext) {
-    return inertia.render('book/index')
+  async create({ inertia }: HttpContext) {
+    return inertia.render('book/create/index')
   }
 
   async store({ request, response, auth, session }: HttpContext) {
@@ -64,37 +64,20 @@ export default class BookController {
     const books = await this.bookService.findAll()
 
     const bookListDTO = books.map((book) => {
-      const bookDTO: BookListDTO = {
-        id: book.id,
-        title: book.title,
-        edition: book.edition,
-        releaseDate: book.releaseDate?.toString() || '',
-        publisherId: book.publisherId,
-        authors: book.authors.map((author) => {
-          const authorDTO: AuthorDTO = {
-            id: author.id,
-            name: author.name,
-            createdAt: author.createdAt.toString() || '',
-            updatedAt: author.updatedAt?.toString() || '',
-          }
-
-          return authorDTO
-        }),
-        publisher: {
-          id: book.publisher.id,
-          name: book.publisher.name,
-          createdAt: book.publisher.createdAt.toString() || '',
-          updatedAt: book.publisher.updatedAt?.toString() || '',
-        },
-        rating: 8,
-        createdAt: book.createdAt.toString() || '',
-        updatedAt: book.updatedAt?.toString() || '',
-      }
+      const bookDTO: BookDTO = createBookDTOFromModel(book)
       return bookDTO
     })
 
     return inertia.render('book/list/index', {
       books: bookListDTO,
     })
+  }
+
+  async edit({ params, inertia }: HttpContext) {
+    const book = await this.bookService.findById(params.id)
+
+    const bookDTO: BookDTO = createBookDTOFromModel(book)
+
+    inertia.render('book/edit', { book: bookDTO })
   }
 }

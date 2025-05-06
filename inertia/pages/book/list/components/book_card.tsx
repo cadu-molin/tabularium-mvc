@@ -2,7 +2,7 @@ import { BookOpen, Bookmark, Share2, Star } from 'lucide-react'
 
 import { useState } from 'react'
 
-import { BookListDTO } from '#dto/book/book_list_dto'
+import { BookDTO } from '#dto/book/book_dto'
 import { Button } from '~/components/ui/button'
 import {
   Card,
@@ -15,7 +15,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
 import { router } from '@inertiajs/react'
 
-export default function BookCard({ book }: { book: BookListDTO }) {
+export default function BookCard({ book }: { book: BookDTO }) {
   const [isSaved, setIsSaved] = useState(false)
 
   // Função para formatar a data de lançamento
@@ -73,7 +73,7 @@ export default function BookCard({ book }: { book: BookListDTO }) {
 
       <CardFooter className="flex justify-between p-3 pt-0 mt-auto border-t">
         <Button
-          onClick={() => router.visit(`/book/${book.id}`)}
+          onClick={() => router.visit(`/book/${book.id}/edit`)}
           variant="default"
           className="flex-1"
         >

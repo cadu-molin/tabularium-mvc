@@ -1,6 +1,7 @@
 import BookException from '#exceptions/book/book_exception'
 import Book from '#models/book'
 import logger from '@adonisjs/core/services/logger'
+import { DateTime } from 'luxon'
 
 interface BookUserParms {
   title: string
@@ -18,7 +19,7 @@ export default class BookService {
       const bookSaved = await Book.create({
         title: book.title,
         edition: book.edition,
-        releaseDate: book.releaseDate,
+        releaseDate: book.releaseDate ? DateTime.fromJSDate(book.releaseDate) : null,
         publisherId: book.publisherId,
       })
 
@@ -26,7 +27,7 @@ export default class BookService {
         throw new BookException('Erro ao criar o livro')
       }
 
-      bookSaved.related('author').attach(book.author)
+      bookSaved.related('authors').attach(book.author)
 
       return bookSaved
     } catch (error) {
@@ -45,6 +46,18 @@ export default class BookService {
       logger.error(error.message)
 
       throw new BookException(error.message)
+    }
+  }
+
+  async findById(id: number): Promise<Book | never> {
+    try {
+      const book = await Book.findOrFail(id)
+      await book.load('authors')
+      await book.load('publisher')
+      return book
+    } catch (error) {
+      logger.error('Erro ao buscar o livro:', error)
+      throw new BookException('Erro ao buscar o livro')
     }
   }
 }
