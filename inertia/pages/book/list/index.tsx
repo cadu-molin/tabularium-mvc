@@ -26,11 +26,6 @@ export default function ListBook({ books }: { books: BookListDTO[] }) {
               <BookCard key={book.id} book={book} />
             </>
           ))}
-          {books.map((book) => (
-            <>
-              <BookCard key={book.id} book={book} />
-            </>
-          ))}
         </div>
       </MainContainerAlternative>
     </>
