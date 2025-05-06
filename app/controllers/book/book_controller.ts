@@ -6,6 +6,8 @@ import BookException from '#exceptions/book/book_exception'
 import type { Result } from '#types/result'
 import { RequestError } from '#dto/request_error'
 import { BookFormDTO } from '#dto/book/book_form_dto'
+import { BookListDTO } from '#dto/book/book_list_dto'
+import { AuthorDTO } from '#dto/author/author_dto'
 
 @inject()
 export default class BookController {
@@ -36,7 +38,7 @@ export default class BookController {
             edition: book.edition,
             releaseDate: book.releaseDate,
             publisherId: book.publisherId,
-            author: book.author,
+            authors: book.authors,
           },
         }
 
@@ -56,5 +58,43 @@ export default class BookController {
 
       return response.internalServerError(responseError)
     }
+  }
+
+  async list({ inertia, auth }: HttpContext) {
+    const books = await this.bookService.findAll()
+
+    const bookListDTO = books.map((book) => {
+      const bookDTO: BookListDTO = {
+        id: book.id,
+        title: book.title,
+        edition: book.edition,
+        releaseDate: book.releaseDate?.toString() || '',
+        publisherId: book.publisherId,
+        authors: book.authors.map((author) => {
+          const authorDTO: AuthorDTO = {
+            id: author.id,
+            name: author.name,
+            createdAt: author.createdAt.toString() || '',
+            updatedAt: author.updatedAt?.toString() || '',
+          }
+
+          return authorDTO
+        }),
+        publisher: {
+          id: book.publisher.id,
+          name: book.publisher.name,
+          createdAt: book.publisher.createdAt.toString() || '',
+          updatedAt: book.publisher.updatedAt?.toString() || '',
+        },
+        rating: 8,
+        createdAt: book.createdAt.toString() || '',
+        updatedAt: book.updatedAt?.toString() || '',
+      }
+      return bookDTO
+    })
+
+    return inertia.render('book/list/index', {
+      books: bookListDTO,
+    })
   }
 }

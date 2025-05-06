@@ -61,7 +61,7 @@ export function MainMenuBar() {
                 <ListItem
                   onClick={(e) => {
                     e.preventDefault()
-                    router.visit('/books')
+                    router.visit('/book/list')
                   }}
                   title="Buscar livros"
                   icon={<Book className="mr-2 h-4 w-4" />}

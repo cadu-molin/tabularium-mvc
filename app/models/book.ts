@@ -23,7 +23,7 @@ export default class Book extends BaseModel {
   declare edition: string
 
   @column()
-  declare releaseDate: Date | null
+  declare releaseDate: DateTime | null
 
   @column()
   declare publisherId: number
@@ -34,7 +34,7 @@ export default class Book extends BaseModel {
   @manyToMany(() => Author, {
     pivotTable: 'book_author',
   })
-  declare author: ManyToMany<typeof Author>
+  declare authors: ManyToMany<typeof Author>
 
   @hasMany(() => BookReview)
   declare reviews: HasMany<typeof BookReview>

@@ -1,9 +1,11 @@
+import { DateTime } from 'luxon'
+
 type BookFormDTO = {
   title: string
   edition: string
-  releaseDate: Date | null
+  releaseDate: DateTime | null
   publisherId: number
-  author: object[]
+  authors: object[]
 }
 
 export type { BookFormDTO }

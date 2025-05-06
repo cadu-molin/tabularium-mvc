@@ -35,4 +35,16 @@ export default class BookService {
       throw new BookException(error.message)
     }
   }
+
+  async findAll(): Promise<Book[] | never> {
+    try {
+      const books = await Book.query().preload('authors').preload('publisher')
+
+      return books
+    } catch (error) {
+      logger.error(error.message)
+
+      throw new BookException(error.message)
+    }
+  }
 }
