@@ -9,7 +9,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from '~/components/ui/navigation-menu'
+} from '~/components/ui/navigation_menu'
 import React from 'react'
 import { router } from '@inertiajs/react'
 
