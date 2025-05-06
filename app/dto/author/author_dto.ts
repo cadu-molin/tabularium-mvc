@@ -11,7 +11,7 @@ function createAuthorDTOFromModel(author: Author): AuthorDTO {
   return {
     id: author.id,
     name: author.name,
-    createdAt: author.createdAt.toString() || '',
+    createdAt: author.createdAt?.toString() || '',
     updatedAt: author.updatedAt?.toString() || '',
   }
 }

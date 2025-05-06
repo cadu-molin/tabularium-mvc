@@ -6,7 +6,7 @@ export default function bookRoute(router: HttpRouterService) {
     router.group(() => {
       router.get('/create', [BookController, 'create']).as('create')
       router.get('/list', [BookController, 'list']).as('list')
-      router.get('/:id/edit', [BookController, 'edit']).as('edit')
+      router.get('/:id/view', [BookController, 'show']).as('show')
     })
   }
 }

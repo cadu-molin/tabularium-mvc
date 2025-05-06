@@ -15,7 +15,7 @@ export default function ListBook({ books }: { books: BookDTO[] }) {
         <Title className="mb-4">Buscar Livros</Title>
 
         <div className="p-4 flex flex-row-reverse">
-          <Button onClick={() => router.visit('/book')} variant="default">
+          <Button onClick={() => router.visit('/book/create')} variant="default">
             <BookOpen className="mr-2 h-4 w-4" />
             Cadastrar novo livro
           </Button>

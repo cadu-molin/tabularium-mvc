@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from '~/components/ui/card'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
 import { router } from '@inertiajs/react'
 
 export default function BookCard({ book }: { book: BookDTO }) {
@@ -73,7 +72,7 @@ export default function BookCard({ book }: { book: BookDTO }) {
 
       <CardFooter className="flex justify-between p-3 pt-0 mt-auto border-t">
         <Button
-          onClick={() => router.visit(`/book/${book.id}/edit`)}
+          onClick={() => router.visit(`/book/${book.id}/view`)}
           variant="default"
           className="flex-1"
         >
@@ -82,36 +81,18 @@ export default function BookCard({ book }: { book: BookDTO }) {
         </Button>
 
         <div className="flex gap-2 ml-2">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setIsSaved(!isSaved)}
-                  className={isSaved ? 'text-primary' : ''}
-                >
-                  <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-primary' : ''}`} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{isSaved ? 'Remover da lista de leitura' : 'Adicionar à lista de leitura'}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setIsSaved(!isSaved)}
+            className={isSaved ? 'text-primary' : ''}
+          >
+            <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-primary' : ''}`} />
+          </Button>
 
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Share2 className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Compartilhar</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Button variant="outline" size="icon">
+            <Share2 className="h-4 w-4" />
+          </Button>
         </div>
       </CardFooter>
     </Card>

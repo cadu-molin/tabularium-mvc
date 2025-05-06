@@ -1,6 +1,6 @@
 import { BookDTO } from '#dto/book/book_dto'
 
-export default function EditBookPage({ book }: { book: BookDTO }) {
+export default function ViewBook({ book }: { book: BookDTO }) {
   console.log(book)
 
   return (

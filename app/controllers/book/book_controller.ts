@@ -7,14 +7,13 @@ import type { Result } from '#types/result'
 import { RequestError } from '#dto/request_error'
 import { BookFormDTO } from '#dto/book/book_form_dto'
 import { BookDTO, createBookDTOFromModel } from '#dto/book/book_dto'
-import { AuthorDTO } from '#dto/author/author_dto'
 
 @inject()
 export default class BookController {
   constructor(protected bookService: BookService) {}
 
   async create({ inertia }: HttpContext) {
-    return inertia.render('book/create/create/index')
+    return inertia.render('book/create/index')
   }
 
   async store({ request, response, auth, session }: HttpContext) {
@@ -73,11 +72,10 @@ export default class BookController {
     })
   }
 
-  async edit({ params, inertia }: HttpContext) {
+  async show({ params, inertia }: HttpContext) {
     const book = await this.bookService.findById(params.id)
+    const bookDTO = createBookDTOFromModel(book)
 
-    const bookDTO: BookDTO = createBookDTOFromModel(book)
-
-    inertia.render('book/edit', { book: bookDTO })
+    return inertia.render('book/view/index', { book: bookDTO })
   }
 }

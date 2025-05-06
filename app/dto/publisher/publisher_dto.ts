@@ -11,7 +11,7 @@ function createPublisherDTOFromModel(publisher: Publisher): PublisherDTO {
   return {
     id: publisher.id,
     name: publisher.name,
-    createdAt: publisher.createdAt.toString() || '',
+    createdAt: publisher.createdAt?.toString() || '',
     updatedAt: publisher.updatedAt?.toString() || '',
   }
 }
