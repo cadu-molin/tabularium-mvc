@@ -14,7 +14,7 @@ export default class BookController {
   constructor(protected bookService: BookService) {}
 
   async create({ inertia }: HttpContext) {
-    return inertia.render('book/create/index')
+    return inertia.render('book/create/create/index')
   }
 
   async store({ request, response, auth, session }: HttpContext) {
