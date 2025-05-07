@@ -8,6 +8,7 @@ import { RequestError } from '#dto/request_error'
 import { BookFormDTO } from '#dto/book/book_form_dto'
 import { BookListDTO } from '#dto/book/book_list_dto'
 import { AuthorDTO } from '#dto/author/author_dto'
+import { DateTime } from 'luxon'
 
 @inject()
 export default class BookController {
@@ -17,35 +18,41 @@ export default class BookController {
     return inertia.render('book/create/index')
   }
 
-  async store({ request, response, auth, session }: HttpContext) {
+  async store({ request, response }: HttpContext) {
     try {
-      const { title, edition, releaseDate, publisherId, author } =
-        await request.validateUsing(bookFormSchemaValidator)
-
-      const book = await this.bookService.createBook({
+      const {
         title,
         edition,
         releaseDate,
         publisherId,
-        author,
+        authorIds,
+      } = await request.validateUsing(bookFormSchemaValidator)
+
+      const finalReleaseDate = releaseDate ? DateTime.fromJSDate(releaseDate) : null
+
+      const book = await this.bookService.createBook({
+        title,
+        edition,
+        releaseDate: finalReleaseDate,
+        publisherId,
+        authorIds,
       })
 
-      if (book) {
-        const responseSuccess: Result<BookFormDTO, {}> = {
-          success: true,
-          data: {
-            title: book.title,
-            edition: book.edition,
-            releaseDate: book.releaseDate,
-            publisherId: book.publisherId,
-            authors: book.authors,
-          },
-        }
+      // Carrega os autores antes de retornar
+      await book.load('authors')
 
-        return response.ok(responseSuccess)
+      const responseSuccess: Result<BookFormDTO, {}> = {
+        success: true,
+        data: {
+          title: book.title,
+          edition: book.edition,
+          releaseDate: book.releaseDate,
+          publisherId: book.publisherId,
+          authorIds: book.authors.map((a) => a.id),
+        },
       }
 
-      throw new BookException('Erro ao criar o livro')
+      return response.ok(responseSuccess)
     } catch (error) {
       const errorResquest: RequestError = {
         message: error.message,
@@ -59,6 +66,7 @@ export default class BookController {
       return response.internalServerError(responseError)
     }
   }
+
 
   async list({ inertia, auth }: HttpContext) {
     const books = await this.bookService.findAll()
