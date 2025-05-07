@@ -26,7 +26,7 @@ function createBookDTOFromModel(book: Book): BookDTO {
       return createAuthorDTOFromModel(author)
     }),
     publisher: createPublisherDTOFromModel(book.publisher),
-    rating: 8,
+    rating: 4,
     createdAt: book.createdAt?.toString() || '',
     updatedAt: book.updatedAt?.toString() || '',
   }
