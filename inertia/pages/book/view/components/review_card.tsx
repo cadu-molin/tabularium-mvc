@@ -18,10 +18,7 @@ export default function ReviewCard({ review }: { review: BookReviewDTO }) {
         <CardTitle>{review.user.fullName}</CardTitle>
         <CardDescription className="flex">
           {Array.from({ length: Rating.MAX_VALUE }, (_, i) => i + 1).map((i) => (
-            <Star
-              key={i}
-              className={`h-4 w-4 ${i <= review.rating.value ? 'fill-yellow-400' : ''}`}
-            />
+            <Star key={i} className={`h-4 w-4 ${i <= review.rating ? 'fill-yellow-400' : ''}`} />
           ))}
         </CardDescription>
       </CardHeader>

@@ -13,30 +13,6 @@ export default function ViewBook({
   book: BookDTO
   reviews?: Array<BookReviewDTO>
 }) {
-  console.log(book)
-
-  const reviewMock: BookReviewDTO = {
-    id: 1,
-    bookId: 1,
-    userId: 1,
-    rating: Rating.create(4),
-    review:
-      'Resenha Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iure unde dolorum repellendus sed ducimus laudantium sit, modi dolores dignissimos numquam vel ipsam labore est quo voluptates illo soluta? Rerum, accusamus.',
-    user: {
-      id: 1,
-      fullName: 'Nelson Rodrigues',
-      login: 'nelson.rodrigues',
-    },
-    createdAt: new Date().toString(),
-    updatedAt: new Date().toString(),
-  }
-
-  reviews = new Array<BookReviewDTO>()
-
-  reviews.push(reviewMock)
-  reviews.push(reviewMock)
-  reviews.push(reviewMock)
-
   return (
     <MainContainerAlternative>
       <div>

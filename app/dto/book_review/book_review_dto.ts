@@ -6,7 +6,7 @@ type BookReviewDTO = {
   id: number
   bookId: number
   userId: number
-  rating: Rating
+  rating: number
   review: string
   user: UserDTO
   createdAt: string
@@ -18,7 +18,7 @@ function createBookReviewDTOFromModel(bookReview: BookReview): BookReviewDTO {
     id: bookReview.id,
     bookId: bookReview.bookId,
     userId: bookReview.userId,
-    rating: bookReview.rating,
+    rating: bookReview.rating.value,
     review: bookReview.review,
     user: createUserDTOFromModel(bookReview.user),
     createdAt: bookReview.createdAt.toString(),

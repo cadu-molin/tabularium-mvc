@@ -7,6 +7,7 @@ import { RequestError } from '#dto/request_error'
 import { BookFormDTO } from '#dto/book/book_form_dto'
 import { DateTime } from 'luxon'
 import { BookDTO, createBookDTOFromModel } from '#dto/book/book_dto'
+import { createBookReviewDTOFromModel } from '#dto/book_review/book_review_dto'
 
 @inject()
 export default class BookController {
@@ -18,13 +19,8 @@ export default class BookController {
 
   async store({ request, response }: HttpContext) {
     try {
-      const {
-        title,
-        edition,
-        releaseDate,
-        publisherId,
-        authorIds,
-      } = await request.validateUsing(bookFormSchemaValidator)
+      const { title, edition, releaseDate, publisherId, authorIds } =
+        await request.validateUsing(bookFormSchemaValidator)
 
       const finalReleaseDate = releaseDate ? DateTime.fromJSDate(releaseDate) : null
 
@@ -65,7 +61,6 @@ export default class BookController {
     }
   }
 
-
   async list({ inertia, auth }: HttpContext) {
     const books = await this.bookService.findAll()
 
@@ -83,6 +78,9 @@ export default class BookController {
     const book = await this.bookService.findById(params.id)
     const bookDTO = createBookDTOFromModel(book)
 
-    return inertia.render('book/view/index', { book: bookDTO })
+    const bookReviews = await book.related('reviews').query().preload('user')
+    const bookReviewsDTO = bookReviews.map((bookReview) => createBookReviewDTOFromModel(bookReview))
+
+    return inertia.render('book/view/index', { book: bookDTO, reviews: bookReviewsDTO })
   }
 }
