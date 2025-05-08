@@ -49,4 +49,16 @@ export default class BookService {
       throw new BookException(error.message)
     }
   }
+
+  async findById(id: number): Promise<Book | never> {
+    try {
+      const book = await Book.findOrFail(id)
+      await book.load('authors')
+      await book.load('publisher')
+      return book
+    } catch (error) {
+      logger.error('Erro ao buscar o livro:', error)
+      throw new BookException('Erro ao buscar o livro')
+    }
+  }
 }
