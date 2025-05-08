@@ -18,7 +18,7 @@ export default class BookReview extends BaseModel {
   @column()
   declare review: string
 
-  @column({ consume: (value) => Rating.create(value) })
+  @column({ consume: (value) => Rating.create(value), prepare: (value: Rating) => value.value })
   declare rating: Rating
 
   @column()

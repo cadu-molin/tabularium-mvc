@@ -32,6 +32,10 @@ export default class Book extends BaseModel {
   declare publisher: BelongsTo<typeof Publisher>
 
   @manyToMany(() => Author, {
+    localKey: 'id',
+    relatedKey: 'id',
+    pivotForeignKey: 'book_id',
+    pivotRelatedForeignKey: 'author_id',
     pivotTable: 'book_author',
   })
   declare authors: ManyToMany<typeof Author>
