@@ -4,6 +4,8 @@ import { Head, usePage } from '@inertiajs/react'
 import { Label } from '@radix-ui/react-label'
 import { useState } from 'react'
 import MainContainer from '~/components/custom/main_container'
+import MainContainerAlternative from '~/components/custom/main_container_alternative'
+import Title from '~/components/custom/title'
 import { Button } from '~/components/ui/button'
 import {
   Card,
@@ -31,84 +33,87 @@ export default function Profile() {
     <>
       <Head title="Perfil" />
 
-      <MainContainer>
-        <Tabs defaultValue="profile" className="w-[400px]">
-          <TabsList>
-            <TabsTrigger value="profile">Perfil</TabsTrigger>
-            <TabsTrigger value="password">Senha</TabsTrigger>
-          </TabsList>
-          <TabsContent value="profile">
-            <Card>
-              <CardHeader>
-                <CardTitle>Perfil</CardTitle>
-                <CardDescription>
-                  Faça alterações na sua conta aqui. Clique em salvar quando terminar.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="space-y-1">
-                  <Label htmlFor="fullName">Nome</Label>
-                  <Input
-                    id="fullName"
-                    defaultValue={fullName || ''}
-                    onChange={(e) => {
-                      setFullName(e.target.value)
-                    }}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="login">Login</Label>
-                  <Input
-                    id="login"
-                    defaultValue={login}
-                    onChange={(e) => {
-                      setLogin(e.target.value)
-                    }}
-                  />
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button>Salvar alterações</Button>
-              </CardFooter>
-            </Card>
-          </TabsContent>
-          <TabsContent value="password">
-            <Card>
-              <CardHeader>
-                <CardTitle>Senha</CardTitle>
-                <CardDescription>
-                  Altere sua senha aqui. Após salvar, você será desconectado.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="space-y-1">
-                  <Label htmlFor="current">Senha atual</Label>
-                  <Input
-                    id="current"
-                    type="password"
-                    onChange={(e) => {
-                      setCurrentPassword(e.target.value)
-                    }}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="new">Senha nova</Label>
-                  <Input
-                    id="new"
-                    type="password"
-                    onChange={(e) => {
-                      setNewPassword(e.target.value)
-                    }}
-                  />
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button>Salvar senha</Button>
-              </CardFooter>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </MainContainer>
+      <MainContainerAlternative>
+        <Title>Meu Perfil</Title>
+        <div className="flex justify-center">
+          <Tabs defaultValue="profile" className="w-[400px]">
+            <TabsList>
+              <TabsTrigger value="profile">Perfil</TabsTrigger>
+              <TabsTrigger value="password">Senha</TabsTrigger>
+            </TabsList>
+            <TabsContent value="profile">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Perfil</CardTitle>
+                  <CardDescription>
+                    Faça alterações na sua conta aqui. Clique em salvar quando terminar.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="fullName">Nome</Label>
+                    <Input
+                      id="fullName"
+                      defaultValue={fullName || ''}
+                      onChange={(e) => {
+                        setFullName(e.target.value)
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="login">Login</Label>
+                    <Input
+                      id="login"
+                      defaultValue={login}
+                      onChange={(e) => {
+                        setLogin(e.target.value)
+                      }}
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button>Salvar alterações</Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+            <TabsContent value="password">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Senha</CardTitle>
+                  <CardDescription>
+                    Altere sua senha aqui. Após salvar, você será desconectado.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="current">Senha atual</Label>
+                    <Input
+                      id="current"
+                      type="password"
+                      onChange={(e) => {
+                        setCurrentPassword(e.target.value)
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="new">Senha nova</Label>
+                    <Input
+                      id="new"
+                      type="password"
+                      onChange={(e) => {
+                        setNewPassword(e.target.value)
+                      }}
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button>Salvar senha</Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </MainContainerAlternative>
     </>
   )
 }
