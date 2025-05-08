@@ -19,9 +19,24 @@ import { Result } from '#types/result'
 import { RequestError } from '#dto/request_error'
 import { BookFormDTO } from '#dto/book/book_form_dto'
 import DataTableDemo from '../teste/page'
+import { useEffect, useState } from 'react'
+
+export type Author = {
+  id: number
+  name: string
+}
 
 export default function BookForm() {
+  const [selectedAuthors, setSelectedAuthors] = useState<number[]>([])
   const { env } = usePage<SharedProps>().props
+  const [authors, setAuthors] = useState<Author[]>([])
+
+  useEffect(() => {
+    fetch(`${env.APP_URL}/authors`)
+      .then((res) => res.json())
+      .then((data) => setAuthors(data))
+      .catch((err) => console.error('Erro ao buscar autores:', err))
+  }, [])
 
   const bookForm = useForm<BookFormSchema>({
     resolver: vineBookFormResolver,
@@ -30,6 +45,9 @@ export default function BookForm() {
 
   async function handleSubmit(submitForm: BookFormSchema) {
     try {
+
+      submitForm.authorIds = selectedAuthors
+
       const responseRegister = await fetch(`${env.APP_URL}/book`, {
         method: 'POST',
         headers: {
@@ -124,13 +142,13 @@ export default function BookForm() {
             )}
           /> */}
           <FormField
-            name="author"
+            name="authorIds"
             control={bookForm.control}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Código da Editora</FormLabel>
                 <FormControl>
-                  <DataTableDemo/>
+                  <DataTableDemo authors={authors} authorsSelected={field.value} onSelectionChange={setSelectedAuthors} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

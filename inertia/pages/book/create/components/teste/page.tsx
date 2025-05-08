@@ -30,87 +30,12 @@ import {
   TableRow,
 } from "~/components/ui/table"
 
-const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    email: "ken99~example.com",
-  },
-  {
-    id: "3u1reuv4",
-    email: "Abe45~example.com",
-  },
-  {
-    id: "derv1ws0",
-    email: "Monserrat44~example.com",
-  },
-  {
-    id: "5kma53ae",
-    email: "Silas22~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-  {
-    id: "bhqecj4p",
-    email: "carmella~example.com",
-  },
-]
-
-export type Payment = {
-  id: string
-  email: string
+export type Author = {
+  id: number
+  name: string
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Author>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -134,7 +59,7 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "email",
+    accessorKey: "name",
     header: ({ column }) => {
       return (
         <Button
@@ -146,21 +71,37 @@ export const columns: ColumnDef<Payment>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
 ]
+interface DataTableDemoProps {
+  authors: Author[],
+  authorsSelected: number[],
+  onSelectionChange: (selectedAuthors: number[]) => void
+}
 
-export default function DataTableDemo() {
+export default function DataTableDemo({ authors, authorsSelected, onSelectionChange }: DataTableDemoProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>(() => {
+    const initialSelection: Record<string, boolean> = {}
+
+    console.log("authorsSelected", authorsSelected)
+    console.log("authors", authors)
+
+    authorsSelected.forEach((author) => {
+      const rowIndex = authors.findIndex((a) => a.id === author)
+      if (rowIndex !== -1) {
+        initialSelection[rowIndex.toString()] = true
+      }
+    })
+
+    return initialSelection
+  })
 
   const table = useReactTable({
-    data,
+    data: authors,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -182,14 +123,19 @@ export default function DataTableDemo() {
     table.setPageSize(5)
   }, [table])
 
+  React.useEffect(() => {
+    const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original.id).map(Number)
+    onSelectionChange(selectedRows)
+  }, [rowSelection])
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
           placeholder="Procurar por autor..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
