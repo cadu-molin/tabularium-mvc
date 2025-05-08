@@ -5,7 +5,7 @@ type BookFormDTO = {
   edition: string
   releaseDate: DateTime | null
   publisherId: number
-  authors: object[]
+  authorIds: number[]
 }
 
 export type { BookFormDTO }

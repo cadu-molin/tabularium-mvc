@@ -3,23 +3,23 @@ import Book from '#models/book'
 import logger from '@adonisjs/core/services/logger'
 import { DateTime } from 'luxon'
 
-interface BookUserParms {
+interface CreateBookParams {
   title: string
   edition: string
-  releaseDate: Date | null
+  releaseDate: DateTime | null
   publisherId: number
-  author: number[]
+  authorIds: number[]
 }
 
 export default class BookService {
   constructor() {}
 
-  async createBook(book: BookUserParms): Promise<Book | never> {
+  async createBook(book: CreateBookParams): Promise<Book> {
     try {
       const bookSaved = await Book.create({
         title: book.title,
         edition: book.edition,
-        releaseDate: book.releaseDate ? DateTime.fromJSDate(book.releaseDate) : null,
+        releaseDate: book.releaseDate,
         publisherId: book.publisherId,
       })
 
@@ -27,13 +27,14 @@ export default class BookService {
         throw new BookException('Erro ao criar o livro')
       }
 
-      bookSaved.related('authors').attach(book.author)
+      // Relacionamento correto é "authors", e deve-se usar await
+      await bookSaved.related('authors').attach(book.authorIds)
 
       return bookSaved
     } catch (error) {
       logger.error(error.message)
 
-      throw new BookException(error.message)
+      throw new BookException('Erro ao criar o livro: ' + error.message)
     }
   }
 
