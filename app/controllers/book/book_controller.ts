@@ -8,15 +8,20 @@ import { BookFormDTO } from '#dto/book/book_form_dto'
 import { DateTime } from 'luxon'
 import { BookDTO, createBookDTOFromModel } from '#dto/book/book_dto'
 import { createBookReviewDTOFromModel } from '#dto/book_review/book_review_dto'
+import AuthorService from '#services/author/author_service'
 
 @inject()
 export default class BookController {
-  constructor(protected bookService: BookService) {}
+  constructor(
+    protected bookService: BookService,
+    protected authorService: AuthorService
+  ) {}
 
   async create({ inertia }: HttpContext) {
-    const publishers = await this.bookService.getAllPublishers()
+    const publishers = await this.bookService.findAllPublishers()
+    const authors = await this.authorService.findAll()
 
-    return inertia.render('book/create/index', { publishers })
+    return inertia.render('book/create/index', { publishers, authors })
   }
 
   async store({ request, response }: HttpContext) {

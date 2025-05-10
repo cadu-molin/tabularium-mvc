@@ -13,26 +13,22 @@ import { Input } from '~/components/ui/input'
 import { vineBookFormResolver, bookFormDefaultValues } from './setup_vine'
 import type { BookFormSchema } from './setup_vine'
 import { Button } from '~/components/ui/button'
-import { router, usePage } from '@inertiajs/react'
+import { usePage } from '@inertiajs/react'
 import { SharedProps } from '@adonisjs/inertia/types'
 import { Result } from '#types/result'
 import { RequestError } from '#dto/request_error'
 import { BookFormDTO } from '#dto/book/book_form_dto'
-import { useEffect, useState } from 'react'
 import { PublisherSearch } from '../publisher_search'
 import { PublisherDTO } from '#dto/publisher/publisher_dto'
 import { AuthorsMultiSelect } from '../author_multi_select'
-
-export type Author = {
-  id: number
-  name: string
-}
+import { AuthorDTO } from '#dto/author/author_dto'
 
 interface BookFormProps {
   publishers: PublisherDTO[]
+  authors: AuthorDTO[]
 }
 
-export default function BookForm({ publishers }: BookFormProps) {
+export default function BookForm({ publishers, authors }: BookFormProps) {
   const { env } = usePage<SharedProps>().props
 
   const bookForm = useForm<BookFormSchema>({
@@ -42,7 +38,9 @@ export default function BookForm({ publishers }: BookFormProps) {
 
   async function handleSubmit(submitForm: BookFormSchema) {
     try {
-      const responseRegister = await fetch(`${env.APP_URL}/auth/login`, {
+      console.log(submitForm)
+
+      const responseRegister = await fetch(`${env.APP_URL}/book/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -142,6 +140,7 @@ export default function BookForm({ publishers }: BookFormProps) {
                   required
                   description="Selecione um ou mais autores do livro."
                   form={bookForm}
+                  authorListAll={authors}
                 />
               </FormControl>
               <FormMessage />

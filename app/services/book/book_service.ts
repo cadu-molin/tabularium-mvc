@@ -63,7 +63,7 @@ export default class BookService {
     }
   }
 
-  async getAllPublishers(): Promise<Publisher[]> {
+  async findAllPublishers(): Promise<Publisher[]> {
     try {
       return await Publisher.query().orderBy('name', 'asc')
     } catch (error) {

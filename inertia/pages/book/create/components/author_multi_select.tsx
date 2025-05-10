@@ -22,39 +22,16 @@ import {
   FormLabel,
   FormMessage,
 } from '~/components/ui/form'
-
-// Tipo para representar um autor
-interface Author {
-  id: number
-  name: string
-}
+import { AuthorDTO } from '#dto/author/author_dto'
 
 // Simulação de API para buscar autores
-const fetchAuthors = async (searchTerm: string): Promise<Author[]> => {
+const fetchAuthors = async (searchTerm: string, authors?: AuthorDTO[]): Promise<AuthorDTO[]> => {
   console.log('Buscando autores com termo:', searchTerm)
 
-  // Em um ambiente real, isso seria uma chamada de API
-  // Simulando um atraso de rede
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  // Dados de exemplo
-  const authors: Author[] = [
-    { id: 1, name: 'J.K. Rowling' },
-    { id: 2, name: 'George R.R. Martin' },
-    { id: 3, name: 'J.R.R. Tolkien' },
-    { id: 4, name: 'Stephen King' },
-    { id: 5, name: 'Agatha Christie' },
-    { id: 6, name: 'Machado de Assis' },
-    { id: 7, name: 'Clarice Lispector' },
-    { id: 8, name: 'Carlos Drummond de Andrade' },
-    { id: 9, name: 'Paulo Coelho' },
-    { id: 10, name: 'Graciliano Ramos' },
-    { id: 11, name: 'José Saramago' },
-    { id: 12, name: 'Gabriel García Márquez' },
-  ]
-
   // Filtra os resultados com base no termo de pesquisa
-  if (!searchTerm) return authors
+  if (!searchTerm) return authors || []
+
+  if (!authors) return []
 
   const filtered = authors.filter((author) =>
     author.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -74,6 +51,7 @@ interface AuthorsMultiSelectProps {
   disabled?: boolean
   error?: string
   form?: any // Para integração com react-hook-form
+  authorListAll?: AuthorDTO[]
 }
 
 // Componente de botão com ref encaminhado
@@ -95,6 +73,7 @@ export const AuthorsMultiSelect = React.forwardRef<HTMLButtonElement, AuthorsMul
       disabled = false,
       error,
       form,
+      authorListAll,
     },
     ref
   ) => {
@@ -103,7 +82,7 @@ export const AuthorsMultiSelect = React.forwardRef<HTMLButtonElement, AuthorsMul
     // Busca autores com base no termo de pesquisa
     const { data: authors = [], isLoading } = useQuery({
       queryKey: ['authors', searchTerm],
-      queryFn: () => fetchAuthors(searchTerm),
+      queryFn: () => fetchAuthors(searchTerm, authorListAll),
       enabled: open,
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 5, // 5 minutos
@@ -115,7 +94,7 @@ export const AuthorsMultiSelect = React.forwardRef<HTMLButtonElement, AuthorsMul
       // Mas para evitar loop, só filtra dos authors disponíveis
       if (!value || value.length === 0) return []
       // Se authors não contém todos, pode-se considerar uma prop extra futuramente
-      return authors.filter((author: Author) => value.includes(author.id))
+      return authors.filter((author: AuthorDTO) => value.includes(author.id))
     }, [value, authors])
 
     // Função para lidar com a mudança no termo de pesquisa
