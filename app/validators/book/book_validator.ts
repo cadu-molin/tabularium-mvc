@@ -8,7 +8,7 @@ const bookFormSchema = vine.object({
   edition: vine.string().minLength(3).maxLength(255),
   releaseDate: vine.date().optional(),
   publisherId: vine.number(),
-  authorIds: vine.array(vine.number()),
+  authorsId: vine.array(vine.number()),
   errors: vine.array(vine.string()).optional(),
 })
 
@@ -16,15 +16,14 @@ const bookFormSchema = vine.object({
 const bookFormSchemaMessages = {
   minLength: 'O campo {{ field }} deve ter pelo menos {{ min }} caracteres.',
   maxLength: 'O campo {{ field }} deve ter no máximo {{ max }} caracteres.',
-  date: 'O campo {{ field }} deve conter um valor de data e hora válido.',
-  exists: 'O valor informado para {{ field }} não existe.',
+  date: 'O campo {{ field }} deve conter um valor de data v válida.',
 }
 
 // Nomes dos campos para mensagens
 const bookFormSchemaMessagesField = {
   title: 'Titulo',
   edition: 'Edição',
-  releaseDate: 'Data de Lançamento',
+  releaseDate: 'Data de Publicação',
   publisherId: 'Editora',
   author: 'Autores',
 }
@@ -34,9 +33,9 @@ const bookFormDefaultValues = {
   title: '',
   edition: '',
   releaseDate: undefined,
-  publisherId: 0,
-  author: [],
-  errors: [],
+  publisherId: undefined,
+  author: new Array<number>(),
+  errors: new Array<string>(),
 }
 
 // Compila o validador e define o provider de mensagens
