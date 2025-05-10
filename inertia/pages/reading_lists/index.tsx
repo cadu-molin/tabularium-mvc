@@ -1,18 +1,22 @@
 import { Head, router, usePage } from '@inertiajs/react'
-import MainContainer from '~/components/custom/main_container'
+import { PageProps as InertiaPageProps } from '@inertiajs/core'
+import MainContainerAlternative from '~/components/custom/main_container_alternative'
 import Title from '~/components/custom/title'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import MainLayout from '~/layouts/main_layout'
+
+interface PageProps extends InertiaPageProps {
+  lists: { id: number; name: string; description?: string }[]
+}
 
 export default function ReadingListIndex() {
-  const { lists } = usePage().props as {
-    lists : { id: number; name: string; description?: string }[]
-  }
+  const { lists } = usePage<PageProps>().props
 
   return (
     <>
       <Head title="Minhas Listas de Leitura" />
-      <MainContainer>
+      <MainContainerAlternative>
         <div className="flex items-center justify-between mb-4">
           <Title>Minhas Listas</Title>
           <Button onClick={() => router.visit('/reading-lists/create')}>Nova Lista</Button>
@@ -30,7 +34,9 @@ export default function ReadingListIndex() {
             </Card>
           ))}
         </div>
-      </MainContainer>
+      </MainContainerAlternative>
     </>
   )
 }
+
+ReadingListIndex.layout = (page: React.ReactNode) => <MainLayout>{page}</MainLayout>
