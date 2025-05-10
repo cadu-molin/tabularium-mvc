@@ -72,155 +72,165 @@ interface PublisherSearchProps {
 const ForwardedButton = React.forwardRef<
   HTMLButtonElement,
   React.ComponentPropsWithoutRef<typeof Button>
->((props, ref) => <Button ref={ref} {...props} />)
+>(({ className, ...props }, ref) => <Button ref={ref} className={className} {...props} />)
 ForwardedButton.displayName = 'ForwardedButton'
 
-export function PublisherSearch({
-  value,
-  onChange,
-  name = 'publisherId',
-  label = 'Editora',
-  description,
-  required = false,
-  disabled = false,
-  error,
-  form,
-}: PublisherSearchProps) {
-  const [open, setOpen] = React.useState(false)
-  const [searchTerm, setSearchTerm] = React.useState('')
-  const [selectedPublisher, setSelectedPublisher] = React.useState<Publisher | null>(null)
+export const PublisherSearch = React.forwardRef<HTMLButtonElement, PublisherSearchProps>(
+  (
+    {
+      value,
+      onChange,
+      name = 'publisherId',
+      label = 'Editora',
+      description,
+      required = false,
+      disabled = false,
+      error,
+      form,
+    },
+    ref
+  ) => {
+    const [open, setOpen] = React.useState(false)
+    const [searchTerm, setSearchTerm] = React.useState('')
+    const [selectedPublisher, setSelectedPublisher] = React.useState<Publisher | null>(null)
 
-  // Busca editoras com base no termo de pesquisa
-  const { data: publishers = [], isLoading } = useQuery({
-    queryKey: ['publishers', searchTerm],
-    queryFn: () => fetchPublishers(searchTerm),
-    enabled: searchTerm.length > 0 || open,
-  })
+    // Busca editoras com base no termo de pesquisa
+    const { data: publishers = [], isLoading } = useQuery({
+      queryKey: ['publishers', searchTerm],
+      queryFn: () => fetchPublishers(searchTerm),
+      enabled: searchTerm.length > 0 || open,
+    })
 
-  // Busca detalhes da editora selecionada quando o valor muda
-  React.useEffect(() => {
-    const fetchPublisherDetails = async () => {
-      if (value) {
-        const publisher = publishers?.find((p) => p.id === value)
-        if (publisher) {
-          setSelectedPublisher(publisher)
-        } else {
-          // Buscar detalhes da editora pelo ID
-          const allPublishers = await fetchPublishers('')
-          const publisher = allPublishers.find((p) => p.id === value)
+    // Busca detalhes da editora selecionada quando o valor muda
+    React.useEffect(() => {
+      const fetchPublisherDetails = async () => {
+        if (value) {
+          const publisher = publishers?.find((p) => p.id === value)
           if (publisher) {
             setSelectedPublisher(publisher)
+          } else {
+            // Buscar detalhes da editora pelo ID
+            const allPublishers = await fetchPublishers('')
+            const publisher = allPublishers.find((p) => p.id === value)
+            if (publisher) {
+              setSelectedPublisher(publisher)
+            }
           }
+        } else {
+          setSelectedPublisher(null)
         }
-      } else {
-        setSelectedPublisher(null)
       }
+
+      fetchPublisherDetails()
+    }, [value, publishers])
+
+    // Se estiver usando com react-hook-form
+    if (form) {
+      return (
+        <FormField
+          control={form.control}
+          name={name}
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>
+                {label}
+                {required && <span className="text-destructive ml-1">*</span>}
+              </FormLabel>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      className={cn(
+                        'w-full justify-between',
+                        !field.value && 'text-muted-foreground'
+                      )}
+                      disabled={disabled}
+                    >
+                      {selectedPublisher
+                        ? selectedPublisher.name
+                        : `Selecione uma ${label.toLowerCase()}`}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-[300px] p-0">
+                  <PublisherCommandList
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
+                    publishers={publishers || []}
+                    isLoading={isLoading}
+                    selectedValue={field.value}
+                    onSelect={(publisherId) => {
+                      field.onChange(publisherId)
+                      setOpen(false)
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+              {description && <FormDescription>{description}</FormDescription>}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )
     }
 
-    fetchPublisherDetails()
-  }, [value, publishers])
-
-  // Se estiver usando com react-hook-form
-  if (form) {
+    // Versão standalone (sem react-hook-form)
     return (
-      <FormField
-        control={form.control}
-        name={name}
-        render={({ field }) => (
-          <FormItem className="flex flex-col">
-            <FormLabel>
-              {label}
-              {required && <span className="text-destructive ml-1">*</span>}
-            </FormLabel>
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <ForwardedButton
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className={cn(
-                      'w-full justify-between',
-                      !field.value && 'text-muted-foreground'
-                    )}
-                    disabled={disabled}
-                  >
-                    {selectedPublisher
-                      ? selectedPublisher.name
-                      : `Selecione uma ${label.toLowerCase()}`}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </ForwardedButton>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-[300px] p-0">
-                <PublisherCommandList
-                  searchTerm={searchTerm}
-                  setSearchTerm={setSearchTerm}
-                  publishers={publishers || []}
-                  isLoading={isLoading}
-                  selectedValue={field.value}
-                  onSelect={(publisherId) => {
-                    field.onChange(publisherId)
-                    setOpen(false)
-                  }}
-                />
-              </PopoverContent>
-            </Popover>
-            {description && <FormDescription>{description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <div className="flex flex-col space-y-1.5">
+        <Label htmlFor={name}>
+          {label}
+          {required && <span className="text-destructive ml-1">*</span>}
+        </Label>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              ref={ref}
+              type="button"
+              id={name}
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className={cn(
+                'w-full justify-between',
+                !value && 'text-muted-foreground',
+                error && 'border-destructive'
+              )}
+              disabled={disabled}
+            >
+              {selectedPublisher ? selectedPublisher.name : `Selecione uma ${label.toLowerCase()}`}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[300px] p-0">
+            <PublisherCommandList
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              publishers={publishers || []}
+              isLoading={isLoading}
+              selectedValue={value}
+              onSelect={(publisherId) => {
+                onChange(publisherId)
+                setOpen(false)
+              }}
+            />
+          </PopoverContent>
+        </Popover>
+        {description && <p className="text-sm text-muted-foreground">{description}</p>}
+        {error && <p className="text-sm font-medium text-destructive">{error}</p>}
+
+        {/* Input oculto para armazenar o ID da editora */}
+        <Input type="hidden" name={name} value={value} readOnly />
+      </div>
     )
   }
+)
 
-  // Versão standalone (sem react-hook-form)
-  return (
-    <div className="flex flex-col space-y-1.5">
-      <Label htmlFor={name}>
-        {label}
-        {required && <span className="text-destructive ml-1">*</span>}
-      </Label>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            id={name}
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className={cn(
-              'w-full justify-between',
-              !value && 'text-muted-foreground',
-              error && 'border-destructive'
-            )}
-            disabled={disabled}
-          >
-            {selectedPublisher ? selectedPublisher.name : `Selecione uma ${label.toLowerCase()}`}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-0">
-          <PublisherCommandList
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            publishers={publishers || []}
-            isLoading={isLoading}
-            selectedValue={value}
-            onSelect={(publisherId) => {
-              onChange(publisherId)
-              setOpen(false)
-            }}
-          />
-        </PopoverContent>
-      </Popover>
-      {description && <p className="text-sm text-muted-foreground">{description}</p>}
-      {error && <p className="text-sm font-medium text-destructive">{error}</p>}
-
-      {/* Input oculto para armazenar o ID da editora */}
-      <Input type="hidden" name={name} value={value} readOnly />
-    </div>
-  )
-}
+PublisherSearch.displayName = 'PublisherSearch'
 
 // Componente interno para a lista de resultados
 function PublisherCommandList({
