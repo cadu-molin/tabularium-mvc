@@ -13,7 +13,8 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:init": "node ace migration:run && node ace db:seed"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",

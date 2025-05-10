@@ -4,7 +4,7 @@ import { vineResolver } from '@hookform/resolvers/vine'
 
 const loginFormSchema = vine.object({
   login: vine.string().minLength(3).maxLength(255),
-  password: vine.string().minLength(8).maxLength(255),
+  password: vine.string().minLength(4).maxLength(255),
   errors: vine.array(vine.string()).optional(),
 })
 

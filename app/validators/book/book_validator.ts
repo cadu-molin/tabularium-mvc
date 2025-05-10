@@ -5,7 +5,7 @@ import { vineResolver } from '@hookform/resolvers/vine'
 // Schema de validação
 const bookFormSchema = vine.object({
   title: vine.string().minLength(3).maxLength(255),
-  edition: vine.string().minLength(3).maxLength(255),
+  edition: vine.string().minLength(1).maxLength(255),
   releaseDate: vine.date({ formats: ['YYYY-MM-DD', 'yyyy-MM-dd'] }).optional(),
   publisherId: vine.number(),
   authorsId: vine.array(vine.number()),
