@@ -20,13 +20,18 @@ import { RequestError } from '#dto/request_error'
 import { BookFormDTO } from '#dto/book/book_form_dto'
 import { useEffect, useState } from 'react'
 import { PublisherSearch } from '../publisher_search'
+import { PublisherDTO } from '#dto/publisher/publisher_dto'
 
 export type Author = {
   id: number
   name: string
 }
 
-export default function BookForm() {
+interface BookFormProps {
+  publishers: PublisherDTO[]
+}
+
+export default function BookForm({ publishers }: BookFormProps) {
   const { env } = usePage<SharedProps>().props
 
   const bookForm = useForm<BookFormSchema>({
@@ -112,11 +117,12 @@ export default function BookForm() {
             <FormItem>
               <FormControl>
                 <PublisherSearch
-                  value={field.value ? String(field.value) : ''}
+                  value={field.value | 0}
                   onChange={field.onChange}
                   required
                   description="Selecione a editora do livro."
                   form={bookForm}
+                  publishersListAll={publishers}
                 />
               </FormControl>
               <FormMessage />

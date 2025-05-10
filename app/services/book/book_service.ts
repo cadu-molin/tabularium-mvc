@@ -1,5 +1,6 @@
 import BookException from '#exceptions/book/book_exception'
 import Book from '#models/book'
+import Publisher from '#models/publisher'
 import logger from '@adonisjs/core/services/logger'
 import { DateTime } from 'luxon'
 
@@ -59,6 +60,15 @@ export default class BookService {
     } catch (error) {
       logger.error('Erro ao buscar o livro:', error)
       throw new BookException('Erro ao buscar o livro')
+    }
+  }
+
+  async getAllPublishers(): Promise<Publisher[]> {
+    try {
+      return await Publisher.query().orderBy('name', 'asc')
+    } catch (error) {
+      logger.error('Erro ao buscar os publishers:', error)
+      throw new BookException('Erro ao buscar os publishers')
     }
   }
 }

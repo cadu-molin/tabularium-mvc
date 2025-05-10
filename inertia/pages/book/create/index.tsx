@@ -4,15 +4,20 @@ import BookForm from './components/book_form'
 import MainLayout from '~/layouts/main_layout'
 import MainContainerAlternative from '~/components/custom/main_container_alternative'
 import { QueryProviders } from './components/query_provider'
+import { PublisherDTO } from '#dto/publisher/publisher_dto'
 
-export default function Book() {
+interface BookProps {
+  publishers: PublisherDTO[]
+}
+
+export default function Book({ publishers }: BookProps) {
   return (
     <>
       <Head title="Livro" />
 
       <MainContainerAlternative>
         <Title>Livro</Title>
-        <BookForm />
+        <BookForm publishers={publishers} />
       </MainContainerAlternative>
     </>
   )

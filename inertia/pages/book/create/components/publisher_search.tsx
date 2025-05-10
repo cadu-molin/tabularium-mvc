@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Check, ChevronsUpDown, Loader2, Search } from 'lucide-react'
+import { Check, ChevronsUpDown, Loader2 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 
 import { cn } from '~/lib/utils'
@@ -23,41 +23,30 @@ import {
   FormLabel,
   FormMessage,
 } from '~/components/ui/form'
+import type { PublisherDTO } from '#dto/publisher/publisher_dto'
 
 // Tipo para representar uma editora
-interface Publisher {
-  id: string
-  name: string
-}
 
 // Simulação de API para buscar editoras
-const fetchPublishers = async (searchTerm: string): Promise<Publisher[]> => {
-  // Em um ambiente real, isso seria uma chamada de API
-  // Simulando um atraso de rede
-  await new Promise((resolve) => setTimeout(resolve, 500))
+const fetchPublishers = async (
+  searchTerm: string,
+  publishers?: PublisherDTO[]
+): Promise<PublisherDTO[]> => {
+  console.log('Buscando editoras com termo:', searchTerm)
 
-  // Dados de exemplo
-  const publishers: Publisher[] = [
-    { id: '1', name: 'Companhia das Letras' },
-    { id: '2', name: 'Rocco' },
-    { id: '3', name: 'Intrínseca' },
-    { id: '4', name: 'Aleph' },
-    { id: '5', name: 'Darkside' },
-    { id: '6', name: 'Suma' },
-    { id: '7', name: 'HarperCollins' },
-    { id: '8', name: 'Editora Record' },
-    { id: '9', name: 'Globo Livros' },
-    { id: '10', name: 'Editora Arqueiro' },
-  ]
+  if (!searchTerm) return publishers || []
 
-  // Filtra os resultados com base no termo de pesquisa
-  return publishers.filter((publisher) =>
+  if (!publishers) return []
+
+  const filtered = publishers.filter((publisher) =>
     publisher.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
+  console.log('filtered publishers:', filtered)
+  return filtered
 }
 
 interface PublisherSearchProps {
-  value: string
+  value: number
   onChange: (value: string) => void
   name?: string
   label?: string
@@ -66,6 +55,7 @@ interface PublisherSearchProps {
   disabled?: boolean
   error?: string
   form?: any // Para integração com react-hook-form
+  publishersListAll?: PublisherDTO[]
 }
 
 // Componente de botão com ref encaminhado
@@ -87,18 +77,21 @@ export const PublisherSearch = React.forwardRef<HTMLButtonElement, PublisherSear
       disabled = false,
       error,
       form,
+      publishersListAll,
     },
     ref
   ) => {
     const [open, setOpen] = React.useState(false)
     const [searchTerm, setSearchTerm] = React.useState('')
-    const [selectedPublisher, setSelectedPublisher] = React.useState<Publisher | null>(null)
+    const [selectedPublisher, setSelectedPublisher] = React.useState<PublisherDTO | null>(null)
 
     // Busca editoras com base no termo de pesquisa
     const { data: publishers = [], isLoading } = useQuery({
       queryKey: ['publishers', searchTerm],
-      queryFn: () => fetchPublishers(searchTerm),
-      enabled: searchTerm.length > 0 || open,
+      queryFn: () => fetchPublishers(searchTerm, publishersListAll),
+      enabled: open,
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5,
     })
 
     // Busca detalhes da editora selecionada quando o valor muda
@@ -110,7 +103,7 @@ export const PublisherSearch = React.forwardRef<HTMLButtonElement, PublisherSear
             setSelectedPublisher(publisher)
           } else {
             // Buscar detalhes da editora pelo ID
-            const allPublishers = await fetchPublishers('')
+            const allPublishers = await fetchPublishers('', publishersListAll)
             const publisher = allPublishers.find((p) => p.id === value)
             if (publisher) {
               setSelectedPublisher(publisher)
@@ -123,6 +116,11 @@ export const PublisherSearch = React.forwardRef<HTMLButtonElement, PublisherSear
 
       fetchPublisherDetails()
     }, [value, publishers])
+
+    const handleSearchChange = React.useCallback((value: string) => {
+      console.log('Termo de pesquisa alterado para:', value)
+      setSearchTerm(value)
+    }, [])
 
     // Se estiver usando com react-hook-form
     if (form) {
@@ -160,7 +158,7 @@ export const PublisherSearch = React.forwardRef<HTMLButtonElement, PublisherSear
                 <PopoverContent className="w-[300px] p-0">
                   <PublisherCommandList
                     searchTerm={searchTerm}
-                    setSearchTerm={setSearchTerm}
+                    setSearchTerm={handleSearchChange}
                     publishers={publishers || []}
                     isLoading={isLoading}
                     selectedValue={field.value}
@@ -201,6 +199,7 @@ export const PublisherSearch = React.forwardRef<HTMLButtonElement, PublisherSear
                 error && 'border-destructive'
               )}
               disabled={disabled}
+              onClick={() => setOpen(true)}
             >
               {selectedPublisher ? selectedPublisher.name : `Selecione uma ${label.toLowerCase()}`}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -209,8 +208,8 @@ export const PublisherSearch = React.forwardRef<HTMLButtonElement, PublisherSear
           <PopoverContent className="w-[300px] p-0">
             <PublisherCommandList
               searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              publishers={publishers || []}
+              setSearchTerm={handleSearchChange}
+              publishers={publishers}
               isLoading={isLoading}
               selectedValue={value}
               onSelect={(publisherId) => {
@@ -243,20 +242,19 @@ function PublisherCommandList({
 }: {
   searchTerm: string
   setSearchTerm: (value: string) => void
-  publishers: Publisher[]
+  publishers: PublisherDTO[]
   isLoading: boolean
-  selectedValue: string
+  selectedValue: number
   onSelect: (value: string) => void
 }) {
   return (
-    <Command>
+    <Command shouldFilter={false}>
       <div className="flex items-center border-b px-3">
-        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
         <CommandInput
           placeholder="Buscar editora..."
           className="h-9 flex-1 border-0 outline-none focus:ring-0"
           value={searchTerm}
-          onValueChange={setSearchTerm}
+          onValueChange={(e) => setSearchTerm(e)}
         />
       </div>
       <CommandList>
@@ -277,8 +275,8 @@ function PublisherCommandList({
               {publishers.map((publisher) => (
                 <CommandItem
                   key={publisher.id}
-                  value={publisher.id}
-                  onSelect={() => onSelect(publisher.id)}
+                  value={String(publisher.id)}
+                  onSelect={() => onSelect(String(publisher.id))}
                 >
                   <div className="flex items-center justify-between w-full">
                     <span>{publisher.name}</span>
