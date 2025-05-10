@@ -13,7 +13,7 @@ import { Input } from '~/components/ui/input'
 import { vineBookFormResolver, bookFormDefaultValues } from './setup_vine'
 import type { BookFormSchema } from './setup_vine'
 import { Button } from '~/components/ui/button'
-import { usePage } from '@inertiajs/react'
+import { router, usePage } from '@inertiajs/react'
 import { SharedProps } from '@adonisjs/inertia/types'
 import { Result } from '#types/result'
 import { RequestError } from '#dto/request_error'
@@ -38,14 +38,20 @@ export default function BookForm({ publishers, authors }: BookFormProps) {
 
   async function handleSubmit(submitForm: BookFormSchema) {
     try {
-      console.log(submitForm)
+      const bodyResquest: BookFormDTO = {
+        title: submitForm.title,
+        edition: submitForm.edition,
+        releaseDate: new Date(submitForm.releaseDate || '').toISOString().split('T')[0],
+        publisherId: submitForm.publisherId,
+        authorsId: submitForm.authorsId,
+      }
 
       const responseRegister = await fetch(`${env.APP_URL}/book/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(submitForm),
+        body: JSON.stringify(bodyResquest),
       })
 
       const responseData: Result<BookFormDTO, RequestError> = await responseRegister.json()
@@ -58,6 +64,8 @@ export default function BookForm({ publishers, authors }: BookFormProps) {
         })
         return
       }
+
+      router.visit('/book/list')
     } catch (error) {
       console.error('Error submitting form:', error)
     }

@@ -47,14 +47,15 @@ export default class BookController {
         data: {
           title: book.title,
           edition: book.edition,
-          releaseDate: book.releaseDate,
+          releaseDate: book.releaseDate?.toISODate() || null,
           publisherId: book.publisherId,
-          authorIds: book.authors.map((a) => a.id),
+          authorsId: book.authors.map((a) => a.id),
         },
       }
 
       return response.ok(responseSuccess)
     } catch (error) {
+      console.log(error)
       const errorResquest: RequestError = {
         message: error.message,
       }

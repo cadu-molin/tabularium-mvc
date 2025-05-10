@@ -6,7 +6,7 @@ import { vineResolver } from '@hookform/resolvers/vine'
 const bookFormSchema = vine.object({
   title: vine.string().minLength(3).maxLength(255),
   edition: vine.string().minLength(3).maxLength(255),
-  releaseDate: vine.date().optional(),
+  releaseDate: vine.date({ formats: ['YYYY-MM-DD', 'yyyy-MM-dd'] }).optional(),
   publisherId: vine.number(),
   authorsId: vine.array(vine.number()),
   errors: vine.array(vine.string()).optional(),
@@ -16,7 +16,7 @@ const bookFormSchema = vine.object({
 const bookFormSchemaMessages = {
   minLength: 'O campo {{ field }} deve ter pelo menos {{ min }} caracteres.',
   maxLength: 'O campo {{ field }} deve ter no máximo {{ max }} caracteres.',
-  date: 'O campo {{ field }} deve conter um valor de data v válida.',
+  date: 'O campo {{ field }} deve conter um valor de data válida.',
 }
 
 // Nomes dos campos para mensagens
