@@ -19,7 +19,7 @@ export default class BookController {
 
   async store({ request, response }: HttpContext) {
     try {
-      const { title, edition, releaseDate, publisherId, authorIds } =
+      const { title, edition, releaseDate, publisherId, authorsId } =
         await request.validateUsing(bookFormSchemaValidator)
 
       const finalReleaseDate = releaseDate ? DateTime.fromJSDate(releaseDate) : null
@@ -29,7 +29,7 @@ export default class BookController {
         edition,
         releaseDate: finalReleaseDate,
         publisherId,
-        authorIds,
+        authorsId,
       })
 
       // Carrega os autores antes de retornar

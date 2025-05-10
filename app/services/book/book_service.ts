@@ -8,7 +8,7 @@ interface CreateBookParams {
   edition: string
   releaseDate: DateTime | null
   publisherId: number
-  authorIds: number[]
+  authorsId: number[]
 }
 
 export default class BookService {
@@ -28,7 +28,7 @@ export default class BookService {
       }
 
       // Relacionamento correto é "authors", e deve-se usar await
-      await bookSaved.related('authors').attach(book.authorIds)
+      await bookSaved.related('authors').attach(book.authorsId)
 
       return bookSaved
     } catch (error) {
