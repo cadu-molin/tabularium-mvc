@@ -135,7 +135,6 @@ export default function BookForm({ publishers }: BookFormProps) {
           control={bookForm.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Autores</FormLabel>
               <FormControl>
                 <AuthorsMultiSelect
                   value={field.value}

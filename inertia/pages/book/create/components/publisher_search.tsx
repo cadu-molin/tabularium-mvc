@@ -115,7 +115,7 @@ export const PublisherSearch = React.forwardRef<HTMLButtonElement, PublisherSear
       }
 
       fetchPublisherDetails()
-    }, [value, publishers])
+    }, [value])
 
     const handleSearchChange = React.useCallback((value: string) => {
       console.log('Termo de pesquisa alterado para:', value)
