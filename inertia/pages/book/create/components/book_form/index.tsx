@@ -21,6 +21,7 @@ import { BookFormDTO } from '#dto/book/book_form_dto'
 import { useEffect, useState } from 'react'
 import { PublisherSearch } from '../publisher_search'
 import { PublisherDTO } from '#dto/publisher/publisher_dto'
+import { AuthorsMultiSelect } from '../author_multi_select'
 
 export type Author = {
   id: number
@@ -136,10 +137,12 @@ export default function BookForm({ publishers }: BookFormProps) {
             <FormItem>
               <FormLabel>Autores</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  value={field.value ? field.value.join(',') : ''}
-                  onChange={(e) => field.onChange(e.target.value.split(',').map(Number))}
+                <AuthorsMultiSelect
+                  value={field.value}
+                  onChange={field.onChange}
+                  required
+                  description="Selecione um ou mais autores do livro."
+                  form={bookForm}
                 />
               </FormControl>
               <FormMessage />
