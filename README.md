@@ -32,6 +32,7 @@ Aplicação web para catalogação e resenha de livros.
    Copie `.env.example` para `.env` e ajuste conforme seu ambiente.
    ```bash
    cp .env.example .env
+   node ace generate:key
    ```
 4. **Execute as migrações do banco de dados:** 
    ```bash
