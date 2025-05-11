@@ -134,9 +134,15 @@ export default class BookController {
 
   async list({ inertia, auth }: HttpContext) {
     const books = await this.bookService.findAll()
+    const booksRating = await this.bookService.findAllRatings()
 
     const bookListDTO = books.map((book) => {
       const bookDTO: BookDTO = createBookDTOFromModel(book)
+
+      const bookRating = booksRating.filter((b) => b.bookId === book.id)[0]
+
+      bookDTO.rating = bookRating ? bookRating.rating : 0
+
       return bookDTO
     })
 
@@ -147,10 +153,18 @@ export default class BookController {
 
   async show({ params, inertia }: HttpContext) {
     const book = await this.bookService.findById(params.id)
-    const bookDTO = createBookDTOFromModel(book)
-
     const bookReviews = await book.related('reviews').query().preload('user')
+
+    const totalRating =
+      bookReviews.reduce((acc, bookReview) => {
+        acc += bookReview.rating.value
+        return acc
+      }, 0) / bookReviews.length
+
+    const bookDTO = createBookDTOFromModel(book)
     const bookReviewsDTO = bookReviews.map((bookReview) => createBookReviewDTOFromModel(bookReview))
+
+    bookDTO.rating = totalRating
 
     return inertia.render('book/view/index', { book: bookDTO, reviews: bookReviewsDTO })
   }

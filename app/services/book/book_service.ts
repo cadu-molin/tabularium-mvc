@@ -1,8 +1,11 @@
 import BookException from '#exceptions/book/book_exception'
 import Book from '#models/book'
+import BookReview from '#models/book_review'
 import Publisher from '#models/publisher'
 import logger from '@adonisjs/core/services/logger'
 import { DateTime } from 'luxon'
+
+import db from '@adonisjs/lucid/services/db'
 
 interface CreateBookParams {
   title: string
@@ -10,6 +13,11 @@ interface CreateBookParams {
   releaseDate: DateTime | null
   publisherId: number
   authorsId: number[]
+}
+
+type QueryRating = {
+  bookId: number
+  rating: number
 }
 
 export default class BookService {
@@ -102,6 +110,26 @@ export default class BookService {
     } catch (error) {
       logger.error('Erro ao atualizar o livro:', error)
       throw new BookException('Erro ao atualizar o livro')
+    }
+  }
+
+  async findAllRatings(): Promise<QueryRating[] | never> {
+    try {
+      const result = await db.rawQuery(
+        'select book_id, avg(rating) as rating from book_review group by book_id;'
+      )
+
+      const ratings: QueryRating[] = result.rows.map((row: { book_id: number; rating: number }) => {
+        return {
+          bookId: Number(row.book_id),
+          rating: Number(row.rating),
+        }
+      })
+
+      return ratings
+    } catch (error) {
+      logger.error('Erro ao buscar os ratings:', error)
+      throw new BookException('Erro ao buscar os ratings')
     }
   }
 }
