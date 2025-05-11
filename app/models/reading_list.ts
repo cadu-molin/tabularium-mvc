@@ -25,7 +25,9 @@ export default class ReadingList extends BaseModel {
   declare user: BelongsTo<typeof User>
 
   @manyToMany(() => Book, {
-    pivotTable: 'reading_list_books',
+    pivotTable: 'reading_list_book',
+    pivotForeignKey: 'reading_list_id',
+    pivotRelatedForeignKey: 'book_id',
   })
   declare books: ManyToMany<typeof Book>
 
