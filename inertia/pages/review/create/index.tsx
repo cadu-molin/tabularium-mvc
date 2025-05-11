@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Head, router, usePage } from '@inertiajs/react'
 import { Label } from '~/components/ui/label'
-import { Input } from '~/components/ui/input'
+import { Textarea } from '~/components/ui/textarea'
 import { Button } from '~/components/ui/button'
 import {
   Card,
@@ -61,13 +61,14 @@ export default function CreateReview() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-1">
-                  <Label htmlFor="review">Comentário</Label>
-                  <Input
+                  <Label htmlFor="review">Resenha</Label>
+                  <Textarea
                     id="review"
                     value={review}
                     onChange={(e) => setReview(e.target.value)}
                     placeholder="Escreva sua resenha aqui..."
                     className={errors.review ? 'border-red-500' : ''}
+                    rows={5}
                   />
                   {errors.review && (
                     <p className="text-sm text-red-500">{errors.review}</p>
@@ -98,7 +99,9 @@ export default function CreateReview() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between">
-                <Button type="submit"> {existingReview ? 'Atualizar Avaliação' : 'Enviar Avaliação'}</Button>
+                <Button type="submit">
+                  {existingReview ? 'Atualizar Avaliação' : 'Enviar Avaliação'}
+                </Button>
                 <Button variant="default" type="button" onClick={() => history.back()}>
                   Cancelar
                 </Button>
