@@ -71,7 +71,7 @@ export default function BookCard({ book }: { book: BookDTO }) {
       </div>
 
       <CardFooter className="flex justify-between p-3 pt-0 mt-auto border-t">
-        <Button onClick={() => console.log('TODO')} variant="default" className="flex-1">
+        <Button onClick={() => router.visit('review/create')} variant="default" className="flex-1">
           <BookOpen className="mr-2 h-4 w-4" />
           Avaliar
         </Button>

@@ -15,13 +15,15 @@ import readingListRoute from './routes/reading_list_route.js'
 import bookRoute from './routes/book_route.js'
 import authorRoute from './routes/author_route.js'
 import { middleware } from './kernel.js'
+import reviewRoute from './routes/review_route.js'
 
 router.group(homeRoute(router)).as('home').use(middleware.userLogged())
 router.group(authRoute(router)).prefix('auth').as('auth')
 router.group(profileRoute(router)).prefix('profile').as('profile').use(middleware.auth())
 router.group(readingListRoute(router)).prefix('reading-lists').as('reading-lists').use(middleware.auth())
 router.group(bookRoute(router)).prefix('book').as('book').use(middleware.auth())
-router.group(authorRoute(router)).as('author').use(middleware.auth())
+router.group(authorRoute(router)).prefix('author').as('author').use(middleware.auth())
+router.group(reviewRoute(router)).prefix('review').as('review').use(middleware.auth())
 
 router.get('*', ({ inertia }) => {
   return inertia.render('errors/not_found')
