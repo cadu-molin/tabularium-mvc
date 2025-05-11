@@ -1,29 +1,17 @@
-import { useForm } from '@inertiajs/react'
-import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { ReadingList } from '../../types'
 
 interface ReadingListFormProps {
-  initialData?: Partial<ReadingList>
-  onSubmit: (data: { name: string; description: string }) => void
+  data: { name: string; description: string }
+  setData: (field: string, value: string) => void
   submitLabel: string
 }
 
-export default function ReadingListForm({ initialData, onSubmit, submitLabel }: ReadingListFormProps) {
-  const { data, setData, processing, errors } = useForm({
-    name: initialData?.name || '',
-    description: initialData?.description || '',
-  })
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit(data)
-  }
-
+export default function ReadingListForm({ data, setData, submitLabel }: ReadingListFormProps) {
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={e => e.preventDefault()}>
       <Card>
         <CardHeader>
           <CardTitle>Informações</CardTitle>
@@ -32,7 +20,6 @@ export default function ReadingListForm({ initialData, onSubmit, submitLabel }: 
           <div>
             <Label htmlFor="name">Nome</Label>
             <Input id="name" value={data.name} onChange={(e) => setData('name', e.target.value)} />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
           </div>
           <div>
             <Label htmlFor="description">Descrição</Label>
@@ -41,13 +28,11 @@ export default function ReadingListForm({ initialData, onSubmit, submitLabel }: 
               value={data.description}
               onChange={(e) => setData('description', e.target.value)}
             />
-            {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
           </div>
         </CardContent>
         <CardFooter>
-          <Button type="submit" disabled={processing}>
-            {submitLabel}
-          </Button>
+          {/* O botão de submit real fica fora deste componente */}
+          <span></span>
         </CardFooter>
       </Card>
     </form>
