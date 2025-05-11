@@ -15,7 +15,7 @@ const reviewFormSchemaMessages = {
 }
 
 const reviewFormSchemaMessagesField = {
-  review: 'Comentário',
+  review: 'Resenha',
   rating: 'Nota',
 }
 
