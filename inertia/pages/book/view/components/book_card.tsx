@@ -1,4 +1,4 @@
-import { BookOpen, Bookmark, Share2, Star } from 'lucide-react'
+import { BookOpen, Bookmark, Share2, Star, Trash } from 'lucide-react'
 
 import { useState } from 'react'
 
@@ -25,6 +25,10 @@ export default function BookCard({ book }: { book: BookDTO }) {
       year: 'numeric',
       month: 'long',
     }).format(date)
+  }
+
+  const handleDelete = (bookId: number) => {
+    router.delete(`/book/${bookId}`)
   }
 
   return (
@@ -71,10 +75,20 @@ export default function BookCard({ book }: { book: BookDTO }) {
       </div>
 
       <CardFooter className="flex justify-between p-3 pt-0 mt-auto border-t">
-        <Button onClick={() => router.visit('review/create')} variant="default" className="flex-1">
-          <BookOpen className="mr-2 h-4 w-4" />
-          Avaliar
-        </Button>
+        <div className="w-full flex flex-col">
+          <Button onClick={() => router.visit('edit')} variant="default" className="flex-1 w-full">
+            <BookOpen className="mr-2 h-4 w-4" />
+            Editar cadastro
+          </Button>
+          <Button
+            onClick={() => router.visit('review/create')}
+            variant="default"
+            className="flex-1 w-full mt-4"
+          >
+            <BookOpen className="mr-2 h-4 w-4" />
+            Avaliar
+          </Button>
+        </div>
 
         <div className="flex gap-2 ml-2">
           <Button
@@ -88,6 +102,9 @@ export default function BookCard({ book }: { book: BookDTO }) {
 
           <Button variant="outline" size="icon">
             <Share2 className="h-4 w-4" />
+          </Button>
+          <Button onClick={() => handleDelete(book.id)} variant="destructive" size="icon">
+            <Trash />
           </Button>
         </div>
       </CardFooter>

@@ -6,7 +6,10 @@ import { vineResolver } from '@hookform/resolvers/vine'
 const bookFormSchema = vine.object({
   title: vine.string().minLength(3).maxLength(255),
   edition: vine.string().minLength(1).maxLength(255),
-  releaseDate: vine.date({ formats: ['YYYY-MM-DD', 'yyyy-MM-dd'] }).optional(),
+  releaseDate: vine
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/) // Regex para validar formato YYYY-MM-DD
+    .optional(),
   publisherId: vine.number(),
   authorsId: vine.array(vine.number()),
   errors: vine.array(vine.string()).optional(),

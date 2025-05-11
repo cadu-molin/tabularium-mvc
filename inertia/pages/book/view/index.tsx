@@ -5,6 +5,7 @@ import BookCard from './components/book_card'
 import ReviewSection from './components/review_section'
 import Rating from '#types/rating'
 import MainLayout from '~/layouts/main_layout'
+import { Head } from '@inertiajs/react'
 
 export default function ViewBook({
   book,
@@ -14,14 +15,18 @@ export default function ViewBook({
   reviews?: Array<BookReviewDTO>
 }) {
   return (
-    <MainContainerAlternative>
-      <div>
-        <BookCard book={book} />
-      </div>
-      <div className="mt-4">
-        <ReviewSection reviews={reviews}></ReviewSection>
-      </div>
-    </MainContainerAlternative>
+    <>
+      <Head title="Detalhes do livro" />
+
+      <MainContainerAlternative>
+        <div>
+          <BookCard book={book} />
+        </div>
+        <div className="mt-4">
+          <ReviewSection reviews={reviews}></ReviewSection>
+        </div>
+      </MainContainerAlternative>
+    </>
   )
 }
 

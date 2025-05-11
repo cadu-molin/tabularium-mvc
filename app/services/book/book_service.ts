@@ -71,4 +71,37 @@ export default class BookService {
       throw new BookException('Erro ao buscar os publishers')
     }
   }
+
+  async deleteBook(id: number): Promise<void> {
+    try {
+      await Book.query().where('id', id).delete()
+    } catch (error) {
+      logger.error('Erro ao deletar o livro:', error)
+      throw new BookException('Erro ao deletar o livro')
+    }
+  }
+
+  async updateBook(id: number, book: CreateBookParams): Promise<number> {
+    try {
+      const rowsAffected = await Book.query().where('id', id).update({
+        title: book.title,
+        edition: book.edition,
+        releaseDate: book.releaseDate,
+        publisherId: book.publisherId,
+      })
+
+      const bookUpdated = await Book.query()
+        .where('id', id)
+        .preload('authors')
+        .preload('publisher')
+        .firstOrFail()
+
+      await bookUpdated.related('authors').sync(book.authorsId)
+
+      return rowsAffected.length
+    } catch (error) {
+      logger.error('Erro ao atualizar o livro:', error)
+      throw new BookException('Erro ao atualizar o livro')
+    }
+  }
 }

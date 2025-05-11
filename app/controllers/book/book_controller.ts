@@ -29,7 +29,7 @@ export default class BookController {
       const { title, edition, releaseDate, publisherId, authorsId } =
         await request.validateUsing(bookFormSchemaValidator)
 
-      const finalReleaseDate = releaseDate ? DateTime.fromJSDate(releaseDate) : null
+      const finalReleaseDate = releaseDate ? DateTime.fromJSDate(new Date(releaseDate)) : null
 
       const book = await this.bookService.createBook({
         title,
@@ -66,6 +66,69 @@ export default class BookController {
       }
 
       return response.internalServerError(responseError)
+    }
+  }
+
+  async delete({ params, response }: HttpContext) {
+    await this.bookService.deleteBook(params.id)
+
+    return response.redirect().toRoute('book.list')
+  }
+
+  async edit({ inertia, params }: HttpContext) {
+    const book = await this.bookService.findById(params.id)
+    const publishers = await this.bookService.findAllPublishers()
+    const authors = await this.authorService.findAll()
+
+    const bookDTO = createBookDTOFromModel(book)
+
+    return inertia.render('book/edit/index', { book: bookDTO, publishers, authors })
+  }
+
+  async update({ request, response, params }: HttpContext) {
+    try {
+      console.log('put', params)
+
+      const { title, edition, releaseDate, publisherId, authorsId } =
+        await request.validateUsing(bookFormSchemaValidator)
+
+      const finalReleaseDate = releaseDate ? DateTime.fromJSDate(new Date(releaseDate)) : null
+
+      const rowsAffected = await this.bookService.updateBook(params.id, {
+        title,
+        edition,
+        releaseDate: finalReleaseDate,
+        publisherId,
+        authorsId,
+      })
+
+      if (rowsAffected <= 0) {
+        throw new Error('Erro ao atualizar o livro')
+      }
+
+      const responseSuccess: Result<BookFormDTO, {}> = {
+        success: true,
+        data: {
+          id: params.id,
+          title,
+          edition,
+          releaseDate: finalReleaseDate?.toISODate() || null,
+          publisherId,
+          authorsId,
+        },
+      }
+
+      return response.ok(responseSuccess)
+    } catch (error) {
+      console.log(error)
+      const errorResquest: RequestError = {
+        message: error.message,
+      }
+
+      const responseError: Result<{}, RequestError> = {
+        success: false,
+        error: errorResquest,
+      }
     }
   }
 
