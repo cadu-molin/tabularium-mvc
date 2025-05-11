@@ -4,7 +4,7 @@ import Title from '~/components/custom/title'
 import LoginForm from './components/login_form'
 import { Button } from '~/components/ui/button'
 
-export default function Register() {
+export default function Login() {
   return (
     <>
       <Head title="Login" />

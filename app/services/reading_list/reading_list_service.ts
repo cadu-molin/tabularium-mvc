@@ -8,10 +8,7 @@ export default class ReadingListService {
   }
 
   async getByIdAndUser(id: number, userId: number) {
-    return ReadingList.query()
-      .where('id', id)
-      .where('userId', userId)
-      .firstOrFail()
+    return ReadingList.query().where('id', id).where('userId', userId).firstOrFail()
   }
 
   async getByIdWithBooks(id: number, userId: number) {

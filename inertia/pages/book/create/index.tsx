@@ -12,7 +12,7 @@ interface BookProps {
   authors: AuthorDTO[]
 }
 
-export default function Book({ publishers, authors }: BookProps) {
+export default function CreateBook({ publishers, authors }: BookProps) {
   return (
     <>
       <Head title="Cadastrar Livro" />
@@ -25,7 +25,7 @@ export default function Book({ publishers, authors }: BookProps) {
   )
 }
 
-Book.layout = (page: React.ReactNode) => (
+CreateBook.layout = (page: React.ReactNode) => (
   <MainLayout>
     <QueryProviders>{page}</QueryProviders>
   </MainLayout>

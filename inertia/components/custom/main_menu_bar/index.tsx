@@ -90,36 +90,6 @@ export function MainMenuBar() {
                 >
                   Buscar por Listas de Leitura
                 </ListItem>
-                <ListItem
-                  onClick={(e) => {
-                    e.preventDefault()
-                    router.visit('/profile/reading-list/current')
-                  }}
-                  title="Lendo atualmente"
-                  icon={<BookOpen className="mr-2 h-4 w-4" />}
-                >
-                  Livros que você está lendo atualmente
-                </ListItem>
-                <ListItem
-                  onClick={(e) => {
-                    e.preventDefault()
-                    router.visit('/profile/reading-list/completed')
-                  }}
-                  title="Concluídos"
-                  icon={<Book className="mr-2 h-4 w-4" />}
-                >
-                  Livros que você já leu
-                </ListItem>
-                <ListItem
-                  onClick={(e) => {
-                    e.preventDefault()
-                    router.visit('/profile/reading-list/wishlist')
-                  }}
-                  title="Lista de Desejos"
-                  icon={<Bookmark className="mr-2 h-4 w-4" />}
-                >
-                  Livros que você deseja ler no futuro
-                </ListItem>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>

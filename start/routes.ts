@@ -20,7 +20,11 @@ import reviewRoute from './routes/review_route.js'
 router.group(homeRoute(router)).as('home').use(middleware.userLogged())
 router.group(authRoute(router)).prefix('auth').as('auth')
 router.group(profileRoute(router)).prefix('profile').as('profile').use(middleware.auth())
-router.group(readingListRoute(router)).prefix('reading-lists').as('reading-lists').use(middleware.auth())
+router
+  .group(readingListRoute(router))
+  .prefix('reading-lists')
+  .as('reading-lists')
+  .use(middleware.auth())
 router.group(bookRoute(router)).prefix('book').as('book').use(middleware.auth())
 router.group(authorRoute(router)).prefix('author').as('author').use(middleware.auth())
 router.group(reviewRoute(router)).prefix('review').as('review').use(middleware.auth())

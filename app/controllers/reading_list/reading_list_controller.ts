@@ -58,7 +58,7 @@ export default class ReadingListController {
   // Atualiza lista
   async update({ request, params, auth, response }: HttpContext) {
     try {
-      const data : ReadingListFormDTO = request.only(['name', 'description'])
+      const data: ReadingListFormDTO = request.only(['name', 'description'])
       const addBooks: number[] = request.input('add_books', [])
       const removeBooks: number[] = request.input('remove_books', [])
 
@@ -83,7 +83,7 @@ export default class ReadingListController {
   // Exclui lista
   async destroy({ params, auth, response }: HttpContext) {
     await this.readingListService.delete(params.id, auth.user!.id)
-    return response.noContent()
+    return response.redirect().toRoute('reading-lists.index')
   }
 
   // Mostra uma lista com seus livros

@@ -29,19 +29,8 @@ export default function CreateReadingList() {
         <Title>Criar Nova Lista</Title>
         <div className="flex justify-center">
           <div className="w-[600px]">
-            <ReadingListForm
-              data={formData}
-              setData={handleFormChange}
-              submitLabel="Criar"
-            />
-            <EditBooks
-              books={[]}
-              allBooks={allBooks || []}
-              selectedToAdd={selectedToAdd}
-              setSelectedToAdd={setSelectedToAdd}
-              toRemove={[]}
-              setToRemove={() => {}}
-            />
+            <ReadingListForm data={formData} setData={handleFormChange} submitLabel="Criar" />
+
             <div className="flex justify-end mt-6">
               <button
                 className="bg-primary text-white px-4 py-2 rounded text-sm"

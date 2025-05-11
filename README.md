@@ -35,7 +35,7 @@ Aplicação web para catalogação e resenha de livros.
    ```
 4. **Execute as migrações do banco de dados:** 
    ```bash
-   node ace migration:run
+   npm run db:init
    ```
 5. **Inicie o servidor de desenvolvimento:** 
    ```bash
