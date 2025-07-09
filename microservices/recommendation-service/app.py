@@ -1,31 +1,21 @@
 from flask import Flask, request, jsonify
 import numpy as np
 import random
+import requests
 
 app = Flask(__name__)
 
-# Pool simulado de livros
-LIVROS_POOL = [
-    {"id": 1, "titulo": "Python para Iniciantes", "autor": "Ana Silva", "genero": "Tecnologia"},
-    {"id": 2, "titulo": "Aventuras no Espaço", "autor": "Carlos Souza", "genero": "Ficção"},
-    {"id": 3, "titulo": "História do Brasil", "autor": "Maria Lima", "genero": "História"},
-    {"id": 4, "titulo": "Culinária Fácil", "autor": "João Pedro", "genero": "Gastronomia"},
-    {"id": 5, "titulo": "O Mistério da Casa", "autor": "Ana Silva", "genero": "Suspense"},
-    {"id": 6, "titulo": "Viagem ao Centro da Terra", "autor": "Carlos Souza", "genero": "Aventura"},
-    {"id": 7, "titulo": "Aprendendo JavaScript", "autor": "Ana Silva", "genero": "Tecnologia"},
-    {"id": 8, "titulo": "O Segredo das Estrelas", "autor": "Carlos Souza", "genero": "Ficção"},
-    {"id": 9, "titulo": "Receitas Veganas", "autor": "João Pedro", "genero": "Gastronomia"},
-    {"id": 10, "titulo": "Brasil Colonial", "autor": "Maria Lima", "genero": "História"},
-]
+BOOK_SERVICE_URL = 'http://localhost:5002/books'
+USER_SERVICE_URL = 'http://localhost:5003/users/{}'
 
-# Função de fitness: prioriza livros de autores/gêneros bem avaliados e evita livros já lidos
-def fitness(individuo, historico_resenhas, livros_lidos):
+# Função de fitness: prioriza livros de autores/gêneros bem avaliados, evita livros já lidos e prioriza preferências do usuário
+def fitness(individuo, historico_resenhas, livros_lidos, preferencias_usuario=None):
     score = 0
     autores_bem_avaliados = set()
     generos_bem_avaliados = set()
     for resenha in historico_resenhas:
         if resenha.get('nota', 0) >= 4:
-            livro = next((l for l in LIVROS_POOL if l['id'] == resenha['livroId']), None)
+            livro = next((l for l in individuo if l['id'] == resenha['livroId']), None)
             if livro:
                 autores_bem_avaliados.add(livro['autor'])
                 generos_bem_avaliados.add(livro['genero'])
@@ -36,18 +26,24 @@ def fitness(individuo, historico_resenhas, livros_lidos):
             score += 3
         if livro['genero'] in generos_bem_avaliados:
             score += 2
+        # Preferências do usuário
+        if preferencias_usuario:
+            if livro['genero'] == preferencias_usuario.get('generoFavorito'):
+                score += 4
+            if livro['autor'] == preferencias_usuario.get('autorFavorito'):
+                score += 4
     return score
 
 # Algoritmo genético real para recomendação de livros
-def algoritmo_genetico(dados_usuario, historico_resenhas, livros_lidos, n_recomendacoes=3, n_pop=20, n_geracoes=30):
+def algoritmo_genetico(livros_pool, dados_usuario, historico_resenhas, livros_lidos, preferencias_usuario=None, n_recomendacoes=3, n_pop=20, n_geracoes=30):
     # Gera população inicial
-    pool_disponivel = [l for l in LIVROS_POOL if l['id'] not in livros_lidos]
+    pool_disponivel = [l for l in livros_pool if l['id'] not in livros_lidos]
     if len(pool_disponivel) < n_recomendacoes:
-        pool_disponivel = LIVROS_POOL  # fallback se usuário já leu quase tudo
+        pool_disponivel = livros_pool  # fallback se usuário já leu quase tudo
     populacao = [random.sample(pool_disponivel, n_recomendacoes) for _ in range(n_pop)]
     for _ in range(n_geracoes):
         # Avalia fitness
-        scores = [fitness(ind, historico_resenhas, livros_lidos) for ind in populacao]
+        scores = [fitness(ind, historico_resenhas, livros_lidos, preferencias_usuario) for ind in populacao]
         # Seleção dos melhores
         pais_idx = np.argsort(scores)[-n_pop//2:]
         pais = [populacao[i] for i in pais_idx]
@@ -68,17 +64,35 @@ def algoritmo_genetico(dados_usuario, historico_resenhas, livros_lidos, n_recome
             filhos.append(filho)
         populacao = pais + filhos
     # Retorna o melhor indivíduo
-    scores = [fitness(ind, historico_resenhas, livros_lidos) for ind in populacao]
+    scores = [fitness(ind, historico_resenhas, livros_lidos, preferencias_usuario) for ind in populacao]
     melhor = populacao[int(np.argmax(scores))]
     return melhor
 
 @app.route('/recomendar', methods=['POST'])
 def recomendar():
     data = request.get_json()
+    usuario_id = data.get('usuarioId')
     dados_usuario = data.get('usuario', {})
     historico_resenhas = data.get('historico_resenhas', [])
     livros_lidos = data.get('livros_lidos', [])
-    recomendacoes = algoritmo_genetico(dados_usuario, historico_resenhas, livros_lidos)
+    preferencias_usuario = None
+    # Busca dados do usuário se usuarioId fornecido
+    if usuario_id:
+        try:
+            resp_user = requests.get(USER_SERVICE_URL.format(usuario_id))
+            resp_user.raise_for_status()
+            usuario_data = resp_user.json()
+            preferencias_usuario = usuario_data.get('preferencias')
+        except Exception as e:
+            return jsonify({'erro': 'Não foi possível obter dados do usuário', 'detalhe': str(e)}), 500
+    # Busca a lista de livros do book-service
+    try:
+        resp = requests.get(BOOK_SERVICE_URL)
+        resp.raise_for_status()
+        livros_pool = resp.json()
+    except Exception as e:
+        return jsonify({'erro': 'Não foi possível obter a lista de livros', 'detalhe': str(e)}), 500
+    recomendacoes = algoritmo_genetico(livros_pool, dados_usuario, historico_resenhas, livros_lidos, preferencias_usuario)
     return jsonify({"recomendacoes": recomendacoes})
 
 if __name__ == '__main__':
